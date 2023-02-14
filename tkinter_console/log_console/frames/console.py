@@ -2,7 +2,7 @@
 import queue
 from logging import (
     Logger, Formatter, LogRecord
-    , DEBUG, INFO, WARNING, ERROR, CRITICAL
+    , NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
 )
 
 import tkinter as tk
@@ -13,7 +13,8 @@ from tkinter_console.log_console.frames.scrolledtext import ScrolledTextEx
 from tkinter_console.log_console.handler.queue_handler import QueueHandler
 
 
-__all__ = ['LogConsoleFrame']
+__all__ = ['LogConsoleFrame'
+           , 'NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
 
 class LogConsoleFrame(ttk.Frame):
     
@@ -44,6 +45,10 @@ class LogConsoleFrame(ttk.Frame):
 
         self.__queue         = queue.Queue()
         self.__queue_handler = QueueHandler(self.__queue)
+
+    @property
+    def scrolled_text_widget(self):
+        return self._scrolled_text_widget
 
     @property
     def log_formatter(self) -> Formatter:
