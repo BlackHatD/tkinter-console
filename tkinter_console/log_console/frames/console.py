@@ -9,7 +9,7 @@ import tkinter as tk
 from tkinter import ttk
 
 # my modules and packages
-from tkinter_console.log_console.frames.scrolledtext import ScrolledTextEx
+from tkinter_console.utils.scrolledtext import ScrolledTextEx
 from tkinter_console.log_console.handler.queue_handler import QueueHandler
 
 
@@ -26,7 +26,7 @@ class LogConsoleFrame(ttk.Frame):
 
         # set scrolled text
         self._scrolled_text_widget = ScrolledTextEx(self, state='disabled'
-                                                    , padx=1, wrap='none')
+                                                    , padx=5, wrap='none')
         self._scrolled_text_widget.configure(font='TkFixedFont', background=background)
 
         # logging settings
