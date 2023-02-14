@@ -23,7 +23,6 @@ class LogSelectorFrame(ttk.Frame):
     def __init__(self, master, console: LogConsoleFrame):
         super(LogSelectorFrame, self).__init__(master=master)
         self._console         : LogConsoleFrame = console
-        self._logger          : Logger          = console.logger
 
         # add 'flag' key
         self._log_display_fmt : dict = {level: {'flag': True, **value}
@@ -47,17 +46,13 @@ class LogSelectorFrame(ttk.Frame):
         return self
 
 
-    def set_checkbutton_flag(self
-                             , debug=False
-                             , info=True, warning=True, error=True, critical=True
-                             ) -> None:
+    def set_checkbutton_flag(self, level) -> None:
         """ set checkbutton flag """
-        flag = 'flag'
-        self._log_display_fmt[DEBUG   ][flag] = debug
-        self._log_display_fmt[INFO    ][flag] = info
-        self._log_display_fmt[WARNING ][flag] = warning
-        self._log_display_fmt[ERROR   ][flag] = error
-        self._log_display_fmt[CRITICAL][flag] = critical
+        for lev, value in copy.deepcopy(self._log_display_fmt).items():
+            if lev >= level:
+                self._log_display_fmt[lev]['flag'] = True
+            else:
+                self._log_display_fmt[lev]['flag'] = False
 
 
     def __create_button_widgets(self) -> None:
