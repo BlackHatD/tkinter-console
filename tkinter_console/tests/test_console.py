@@ -7,33 +7,36 @@ from logging import getLogger, DEBUG
 from tkinter_console import LogConsoleFrame
 
 
-logger = getLogger(__name__)
-
 if __name__ == '__main__':
+    # create a logger object and set logger level
+    logger = getLogger(__name__)
     logger.setLevel(level=DEBUG)
 
+    # win size
     win_size = 640, 480
 
+    # create root object
     root = tk.Tk()
-    root.title('Logging Handler Test')
+    root.title('LogConsoleFrame Test')
     root.geometry('{}x{}'.format(*win_size))
 
-
-    # console
+    # create console frame
     console_frame = ttk.Label(root, text='Log console')
     console_frame.pack(expand=True, fill=tk.BOTH)
 
-    # initialize all frames
-    console = LogConsoleFrame(console_frame, logger)
-    console.set_display_debug_format(foreground="black")
-    log_format = "%(asctime)s\t[%(levelname)-8s]\t%(name)s\t%(filename)s\t%(funcName)s:%(lineno)d\t%(message)s"
-    console.log_formatter = log_format
+    # crate consoler inner frame
+    console_inner_frame = LogConsoleFrame(console_frame, logger)
+    console_inner_frame.set_display_debug_format(foreground="yellow")
+
+    # set log format
+    log_format = " %(asctime)s\t[%(levelname)-8s]\t%(name)s\t%(filename)s\t%(funcName)s:%(lineno)d\t%(message)s"
+    console_inner_frame.log_formatter = log_format
+
+    # initialize inner frame
+    console_inner_frame.init().pack()
 
 
-    console.init().pack(fill=tk.BOTH, expand=True)
-
-
-    # Log some messages
+    # log some messages
     for i in range(5):
         if i % 5 == 0:
             logger.debug('debug message')
@@ -42,5 +45,7 @@ if __name__ == '__main__':
         logger.error('error message')
         logger.critical('critical message')
 
+
+    # main loop
     root.mainloop()
 
