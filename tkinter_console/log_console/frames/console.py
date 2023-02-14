@@ -18,7 +18,7 @@ __all__ = ['LogConsoleFrame'
 
 class LogConsoleFrame(ttk.Frame):
     
-    def __init__(self, master, logger: Logger, auto_scroll=True):
+    def __init__(self, master, logger: Logger, log_format='%(message)s', auto_scroll=True):
         super(LogConsoleFrame, self).__init__(master)
 
         # set scrolled text
@@ -28,7 +28,7 @@ class LogConsoleFrame(ttk.Frame):
 
         # logging settings
         self.logger          = logger
-        self._log_formatter  = Formatter("%(message)s")
+        self._log_formatter  = Formatter(log_format)
 
         # logging display format
         self._log_display_format = {
@@ -62,6 +62,9 @@ class LogConsoleFrame(ttk.Frame):
             self._log_formatter = log_formatter
         else:
             self._log_formatter = Formatter(log_formatter)
+
+        # set formatter
+        self.__queue_handler.setFormatter(self._log_formatter)
 
     @property
     def log_display_format(self) -> dict:
@@ -112,6 +115,9 @@ class LogConsoleFrame(ttk.Frame):
 
         # start polling message from the queue
         self.after(self.__poling_time, self.__poll_log_queue)
+
+        # setting pack configure
+        self.pack_configure(fill=tk.BOTH, expand=True)
 
         return self
 
