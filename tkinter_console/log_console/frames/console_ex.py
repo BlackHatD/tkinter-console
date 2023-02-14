@@ -78,7 +78,7 @@ class LogConsoleExFrame(ttk.Frame):
         return self.__log_formatter
 
     @log_formatter.setter
-    def log_formatter(self, log_formatter):
+    def log_formatter(self, log_formatter: str | Formatter):
         self.__w_console_inner_frame.log_formatter = log_formatter
         self.__log_formatter = self.__w_console_inner_frame.log_formatter
 
