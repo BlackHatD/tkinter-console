@@ -1,21 +1,24 @@
 # -*- coding:utf-8 -*-
-import logging
-from logging import getLogger, DEBUG, WARNING, ERROR
+from logging import getLogger, WARNING, ERROR
 import tkinter as tk
 from tkinter import ttk
-from tkinter_console import *
+
+
+# my modules and packages
+from tkinter_console import LogConsoleFrame, LogSelectorFrame
 
 
 if __name__ == '__main__':
+    # create a logger object and set logger level
     logger = getLogger(__name__)
-    logger.setLevel(DEBUG)
+    logger.setLevel(WARNING)
 
     root = tk.Tk()
-    root.title('Log Selector Test')
+    root.title('LogSelectorFrame Test')
     root.geometry('1024x480')
 
     # selector frame
-    selector_frame = ttk.LabelFrame(root, text="Log text disable")
+    selector_frame = ttk.LabelFrame(root, text="Log text selector")
     selector_frame.pack(fill=tk.BOTH)
 
     # console frame
@@ -23,13 +26,13 @@ if __name__ == '__main__':
     console_frame.pack(fill=tk.BOTH, expand=True)
 
     # create console and selector instance
-    console = LogConsoleFrame(console_frame, logger)
-    console.scrolled_text_widget.configure(background='black')
-    console.init().pack(fill=tk.BOTH, expand=True)
+    console_inner_frame = LogConsoleFrame(console_frame, logger)
+    console_inner_frame.scrolled_text_widget.configure(background='black')
+    console_inner_frame.init().pack(fill=tk.BOTH, expand=True)
 
-    selector = LogSelectorFrame(selector_frame, console)
-    selector.set_checkbutton_flag(logging.CRITICAL)
-    selector.init().pack(fill=tk.BOTH, expand=True)
+    selector_inner_frame = LogSelectorFrame(selector_frame, console_inner_frame)
+    selector_inner_frame.set_checkbutton_flag(ERROR)
+    selector_inner_frame.init().pack(fill=tk.BOTH, expand=True)
 
 
     # Log some messages
