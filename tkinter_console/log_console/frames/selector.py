@@ -2,7 +2,6 @@
 import copy
 import tkinter as tk
 
-from typing import Optional
 from tkinter import ttk
 from logging import (
     Logger, getLevelName
@@ -10,7 +9,7 @@ from logging import (
 
 # my modules and packages
 from tkinter_console.log_console.frames.console import LogConsoleFrame
-from tkinter_console.log_console.frames.checkbuttonex import CheckButtonEx
+from tkinter_console.utils.checkbuttonex import CheckButtonEx
 
 
 __all__ = ['LogSelectorFrame']
