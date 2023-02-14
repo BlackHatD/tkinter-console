@@ -79,10 +79,14 @@ class LogSelectorFrame(ttk.Frame):
     def __switch_callback(self):
         """ switch display a message, or not """
         for key, value in self._log_display_fmt.items():
-            # true
-            if self.__checkbuttons[key].get():
+
+            cb = self.__checkbuttons.get(key)
+
+            # is True
+            if cb and cb.get():
                 self.__switcher(key, False)
-            # false
+
+            # is False
             else:
                 self.__switcher(key, True)
 
