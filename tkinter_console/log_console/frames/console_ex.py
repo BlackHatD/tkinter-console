@@ -32,7 +32,7 @@ class LogConsoleExFrame(ttk.Frame):
         Args:
             master       : master (tk or ttk objects)
             logger       : logger object
-            level        : default checkbutton flags. If set 'level=INFO', checkbuttons checked except "DEBUG"
+            level        : default checkbutton flags. If set 'level=INFO', checkbuttons are checked except "DEBUG"
             console_bg   : console background color
             auto_scroll  : do auto scroll or not
             log_formatter: formatter
