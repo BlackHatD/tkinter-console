@@ -34,11 +34,12 @@ if __name__ == '__main__':
                                       , level=DEBUG
                                       , expand_btn=True)
 
+    # set log format
+    console_frame.log_formatter = '%(asctime)s\t[%(levelname)-8s]\t%(name)s\t%(filename)s\t%(funcName)s:%(lineno)d\t%(message)s'
+
     # initialize console frame at first
     console_frame.init().pack()
 
-    # set log format
-    console_frame.log_formatter = ' %(asctime)s\t[%(levelname)-8s]\t%(name)s\t%(filename)s\t%(funcName)s:%(lineno)d\t%(message)s'
 
 
     # for test

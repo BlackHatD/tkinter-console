@@ -29,7 +29,7 @@ if __name__ == '__main__':
     console_inner_frame.set_display_debug_format(foreground="yellow")
 
     # set log format
-    log_format = " %(asctime)s\t[%(levelname)-8s]\t%(name)s\t%(filename)s\t%(funcName)s:%(lineno)d\t%(message)s"
+    log_format = "%(asctime)s\t[%(levelname)-8s]\t%(name)s\t%(filename)s\t%(funcName)s:%(lineno)d\t%(message)s"
     console_inner_frame.log_formatter = log_format
 
     # initialize inner frame
