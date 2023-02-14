@@ -26,6 +26,10 @@ if __name__ == '__main__':
     # initialize all frames
     console = LogConsoleFrame(console_frame, logger)
     console.set_display_debug_format(foreground="black")
+    log_format = "%(asctime)s\t[%(levelname)-8s]\t%(name)s\t%(filename)s\t%(funcName)s:%(lineno)d\t%(message)s"
+    console.log_formatter = log_format
+
+
     console.init().pack(fill=tk.BOTH, expand=True)
 
 
