@@ -73,6 +73,10 @@ class LogConsoleExFrame(ttk.Frame):
 
         self.__w_expand_button : Optional[ttk.Button] = None
 
+        # create widgets
+        self.__create_widgets()
+
+
     @property
     def log_formatter(self):
         return self.__log_formatter
@@ -121,8 +125,6 @@ class LogConsoleExFrame(ttk.Frame):
         Returns:
             LogConsoleExFrame: instance
         """
-        # create widgets
-        self.__create_widgets()
         self.__w_selector_labelframe.configure(**self.w_selector_labelframe_config)
         self.__w_console_labelframe.configure(**self.w_console_labelframe_config)
 
@@ -146,6 +148,14 @@ class LogConsoleExFrame(ttk.Frame):
 
 
     def __create_widgets(self):
+        """ create below widgets
+
+        - selector labelframe
+        - selector inner frame from LogSelectorFrame
+        - console labelframe
+        - console inner frame from LogConsoleFrame class
+        """
+
         # create label frames
         # selector
         self.__w_selector_labelframe = ttk.LabelFrame(self)
