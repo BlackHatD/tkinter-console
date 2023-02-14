@@ -16,7 +16,7 @@ class LogConsoleExFrame(ttk.Frame):
 
     def __init__(self, master, logger: Logger
                  , level=INFO
-                 , bg='black', auto_scroll=True
+                 , console_bg='black', auto_scroll=True
                  , log_formatter=Formatter('%(message)s')
                  , expand_btn=False):
 
@@ -33,7 +33,7 @@ class LogConsoleExFrame(ttk.Frame):
             master       : master (tk or ttk objects)
             logger       : logger object
             level        : default checkbutton flags. If set 'level=INFO', checkbuttons checked except "DEBUG"
-            bg           : console background color
+            console_bg   : console background color
             auto_scroll  : do auto scroll or not
             log_formatter: formatter
             expand_btn   : show expand button
@@ -51,7 +51,7 @@ class LogConsoleExFrame(ttk.Frame):
         # for console
         # do auto scroll or not
         self.__auto_scroll = auto_scroll
-        self.__console_bg  = bg
+        self.__console_bg  = console_bg
 
         # widgets
         self.__w_selector_labelframe: Optional[ttk.LabelFrame] = None
@@ -102,6 +102,17 @@ class LogConsoleExFrame(ttk.Frame):
     def console_labelframe(self) -> ttk.LabelFrame:
         """ ttk.LabelFrame: console label frame """
         return self.__w_console_labelframe
+
+    @property
+    def console_background(self) -> str:
+        """ str: console background color """
+        return self.__console_bg
+
+    @console_background.setter
+    def console_background(self, color):
+        if self.__w_console_inner_frame:
+            self.__w_console_inner_frame.set_background(color)
+        self.__console_bg = color
 
 
     def init(self):

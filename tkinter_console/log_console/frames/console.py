@@ -18,13 +18,16 @@ __all__ = ['LogConsoleFrame'
 
 class LogConsoleFrame(ttk.Frame):
     
-    def __init__(self, master, logger: Logger, log_format='%(message)s', auto_scroll=True):
+    def __init__(self, master
+                 , logger: Logger, log_format='%(message)s'
+                 , background='black'
+                 , auto_scroll=True):
         super(LogConsoleFrame, self).__init__(master)
 
         # set scrolled text
         self._scrolled_text_widget = ScrolledTextEx(self, state='disabled'
                                                     , padx=1, wrap='none')
-        self._scrolled_text_widget.configure(font='TkFixedFont')
+        self._scrolled_text_widget.configure(font='TkFixedFont', background=background)
 
         # logging settings
         self.logger          = logger
@@ -55,6 +58,9 @@ class LogConsoleFrame(ttk.Frame):
         """ Formatter: log formatter """
         return self._log_formatter
 
+    def set_background(self, color):
+        """ set background """
+        self._scrolled_text_widget.configure(background=color)
 
     @log_formatter.setter
     def log_formatter(self, log_formatter: str | Formatter):
