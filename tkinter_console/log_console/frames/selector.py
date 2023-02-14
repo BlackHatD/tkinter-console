@@ -9,10 +9,7 @@ from logging import (
 )
 
 # my modules and packages
-from tkinter_console.log_console.frames.console import (
-    LogConsoleFrame
-    , DEBUG, INFO, WARNING, ERROR, CRITICAL
-)
+from tkinter_console.log_console.frames.console import LogConsoleFrame
 from tkinter_console.log_console.frames.checkbuttonex import CheckButtonEx
 
 
@@ -42,6 +39,9 @@ class LogSelectorFrame(ttk.Frame):
 
         # run callback method at first
         self.__switch_callback()
+
+        # setting pack configure
+        self.pack_configure(fill=tk.X, expand=True)
 
         return self
 
