@@ -14,9 +14,14 @@ class std_fork_decorator:
     traceback = traceback.__name__
 
     def __init__(self, callback: Optional[Callable] = None):
+
         # set functions
         self._func: Optional[Callable] = None
-        self._callback = callback if callback else lambda output: output
+
+        # callback(output, result of func)
+        self._callback = (callback
+                          if callback
+                          else lambda output, result: None)
 
         # for restoring
         self._org_stdin  = sys.stdin
@@ -62,7 +67,7 @@ class std_fork_decorator:
 
                 # run callback
                 try:
-                    self._callback(output=self._output)
+                    self._callback(self._output, self._result)
                 except Exception:
                     traceback.print_exc()
 
