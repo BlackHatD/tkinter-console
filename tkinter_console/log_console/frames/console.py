@@ -50,7 +50,13 @@ class LogConsoleFrame(ttk.Frame):
         self.__queue_handler = QueueHandler(self.__queue)
 
     @property
-    def scrolled_text_widget(self):
+    def queue_handler(self) -> QueueHandler:
+        """ QueueHandler: handler """
+        return self.__queue_handler
+
+    @property
+    def scrolled_text_widget(self) -> ScrolledTextEx:
+        """ ScrolledTextEx: widget """
         return self._scrolled_text_widget
 
     @property
