@@ -21,7 +21,7 @@ class std_forker:
         # callback(output, result of func)
         self._callback = (callback
                           if callback
-                          else lambda output, result: None)
+                          else lambda output, func_result: None)
 
         # for restoring
         self._org_stdin  = sys.stdin
@@ -29,7 +29,7 @@ class std_forker:
         self._org_stderr = sys.stderr
 
         # function result
-        self._result = None
+        self._func_result = None
 
         # for callback args
         self._org_output = {self.stdin      : ''
@@ -50,7 +50,7 @@ class std_forker:
                 self.__override_std()
 
                 # run function and set return value
-                self._result = func(*args, **kwargs)
+                self._func_result = func(*args, **kwargs)
 
             except Exception:
                 # set traceback
@@ -67,7 +67,7 @@ class std_forker:
 
                 # run callback
                 try:
-                    self._callback(self._output, self._result)
+                    self._callback(self._output, self._func_result)
 
                 except Exception:
                     traceback.print_exc()
@@ -75,7 +75,7 @@ class std_forker:
                 # restore output
                 self._output = copy.deepcopy(self._org_output)
 
-            return self._result
+            return self._func_result
 
         # return wrapper function's address
         return wrapper
