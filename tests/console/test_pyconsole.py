@@ -9,6 +9,7 @@ from tkinter_console.console.pyconsole import PyConsole
 
 if __name__ == '__main__':
     root = tk.Tk()
+    root.title("PyConsole Test")
 
     console = PyConsole(root, locals(), wrap='none').init()
     info    = tk.StringVar()
