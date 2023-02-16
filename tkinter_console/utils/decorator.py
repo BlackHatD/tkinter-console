@@ -5,9 +5,9 @@ import sys
 import traceback
 from typing import Optional, Callable
 
-__all__ = ['std_fork_decorator']
+__all__ = ['std_forker']
 
-class std_fork_decorator:
+class std_forker:
     stdin     = sys.__stdin__.name
     stdout    = sys.__stdout__.name
     stderr    = sys.__stderr__.name
@@ -36,7 +36,7 @@ class std_fork_decorator:
                             , self.stdout   : ''
                             , self.stderr   : ''
                             , self.traceback: ''}
-        self._output    = copy.deepcopy(self._org_output)
+        self._output     = copy.deepcopy(self._org_output)
 
 
     def __call__(self, func):
@@ -50,7 +50,7 @@ class std_fork_decorator:
                 self.__override_std()
 
                 # run function and set return value
-                self._result = self._func(*args, **kwargs)
+                self._result = func(*args, **kwargs)
 
             except Exception:
                 # set traceback
@@ -68,6 +68,7 @@ class std_fork_decorator:
                 # run callback
                 try:
                     self._callback(self._output, self._result)
+
                 except Exception:
                     traceback.print_exc()
 
