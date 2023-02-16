@@ -9,6 +9,7 @@ from typing import Optional, Callable
 # my modules and packages
 from tkinter_console.utils.scrolledtext import ScrolledTextEx
 from tkinter_console.utils.decorator import std_forker
+from tkinter_console.utils.history import History
 
 
 __all__ = ['PyConsole']
@@ -42,8 +43,9 @@ class PyConsole(ScrolledTextEx):
 
         # committed string list (set in '__init_prompt' method at the first time)
         #   if is the waiting stat, appended command strings
-        self.__committed_strings: Optional[list] = None
-        self.__committed_strings_history         = []
+        self.__committed_strings: Optional[list]  = None
+        # for getting command in history
+        self.__committed_string_history: History = History()
 
 
     @property
@@ -60,24 +62,6 @@ class PyConsole(ScrolledTextEx):
 
         # initialize prompt
         self.__init_prompt()
-
-
-    def __init_prompt(self):
-        """ initialize prompt """
-        # set prompt string
-        self.__used_prompt_string = self._prompt_string['normal']
-
-        # set wait flag as False
-        self.__wait_flag = False
-
-        # delete strings on the line
-        self.delete('.'.join([self.__get_current_row(), '0']), 'end-1c')
-
-        # clear committed strings
-        self.__committed_strings = []
-
-        # prompt
-        self.__prompt()
 
 
     def init(self):
@@ -101,11 +85,29 @@ class PyConsole(ScrolledTextEx):
         return self
 
 
+    def __init_prompt(self):
+        """ initialize prompt """
+        # set prompt string
+        self.__used_prompt_string = self._prompt_string['normal']
+
+        # set wait flag as False
+        self.__wait_flag = False
+
+        # delete strings on the line except prompt
+        self.__delete_line()
+
+        # clear committed strings
+        self.__committed_strings = []
+
+        # prompt
+        self.__prompt()
+
+
 
     def __prompt(self) -> None:
         """ prompt
 
-        Prompt '>>>' at the normal state, else '...' by default
+        Prompt '>>> ' at the normal state, else '... ' by default
         """
         self.mark_set(self._prompt_mark, tk.END)
         self.mark_gravity(self._prompt_mark, tk.RIGHT)
@@ -121,23 +123,43 @@ class PyConsole(ScrolledTextEx):
         self.mark_gravity(self._prompt_mark, tk.LEFT)
 
 
-    def __get_current_line(self) -> list:
+    def __do_pressed_enter_key(self, event=None):
+        """ if pressed enter key, execute the inputted command """
+        # execute the inputted strings
+        self.__execute_command_as_thread()
+        return self.__do_not_do_anything()
+
+
+    def __get_current_index(self) -> list:
         """ return (row,pos) """
         return self.index(tk.INSERT).split('.')
 
     def __get_current_row(self) -> str:
         """ return current row """
-        return self.__get_current_line()[0]
+        return self.__get_current_index()[0]
 
     def __get_current_pos(self) -> str:
         """ return current insert pos """
-        return self.__get_current_line()[1]
+        return self.__get_current_index()[1]
 
-    def __get_command_strings(self):
-        """ get only command strings """
-        row, pos      = self.__get_current_line()
+    def __get_prompt_end_index(self) -> str:
+        """ get prompt end line """
+        row, pos      = self.__get_current_index()
         prompt_length = len(self.__used_prompt_string)
-        return self.get('.'.join([row, str(prompt_length)]), tk.END)
+        return '.'.join([row, str(prompt_length)])
+
+    def __get_command_string(self) -> str:
+        """ get only command strings """
+        return self.get(self.__get_prompt_end_index(), tk.END)
+
+    def __delete_line(self) -> None:
+        """ delete command line """
+        self.delete(self.__get_prompt_end_index(), 'end-1c')
+
+    def __write_command(self, command: str) -> None:
+        """ write command string into text widget """
+        self.__delete_line()
+        self.insert(tk.INSERT, command if command else '')
 
 
     def __bind_ctr_c(self, func: Optional[Callable] = None) -> None:
@@ -152,11 +174,16 @@ class PyConsole(ScrolledTextEx):
         self.bind('<Control-c>', func if func else default_func)
 
 
-    def __do_pressed_enter_key(self, event=None):
-        """ if pressed enter key, execute the inputted command """
-        # execute the inputted strings
-        self.__execute_command_as_thread()
-        return self.__do_not_do_anything()
+    def __add_history(self, command: str) -> None:
+        """ add a command in the history """
+        # right strip at first
+        command = command.rstrip()
+        history = self.__committed_string_history
+
+        # check the command for whether adding or not
+        if command != history.current():
+            if command != history.get_index(-1):
+                self.__committed_string_history.add(command)
 
 
     @staticmethod
@@ -175,7 +202,7 @@ class PyConsole(ScrolledTextEx):
             #   but bellow patterns can't be checked
             #     'fn' + 'home' key and so on...
             #   so in the function check these patterns
-            row, pos = self.__get_current_line()
+            row, pos = self.__get_current_index()
             prompt_length = len(self.__used_prompt_string)
 
             if int(pos) < prompt_length:
@@ -194,11 +221,12 @@ class PyConsole(ScrolledTextEx):
         """ bind checking action
 
         - press key
-            - prevent the input position from going before the prompt
-            - not allowed 'up' and 'down' key
+            - prevent the input position from going before the prompt.
+            - up   : insert a prev string from history.
+            - down : insert a next string from history.
 
         - click
-            prevent the input position moves to the cursor
+            prevent the input position moves to the cursor.
 
         """
 
@@ -224,29 +252,27 @@ class PyConsole(ScrolledTextEx):
             self.mark_set(tk.INSERT, 'end - 1c')
 
         # inner function
-        def _get_history(press='up'):
-            # TODO-#2: insert command into history
+        def _write_history_command(press='up'):
+            # add the command into the history at first
+            self.__add_history(self.__get_command_string())
 
-            press = press.lower()
-
-            command = self.__get_command_strings()
-            if command not in self.__committed_strings_history:
-                self.__committed_strings_history.append(command)
-
+            history = self.__committed_string_history
+            # undo
             if press == 'up':
-                pass
+                self.__write_command(history.prev())
+            # redo
             elif press == 'down':
-                pass
+                self.__write_command(history.next())
 
             return self.__do_not_do_anything()
 
         # inner function
         def _press_up_key(e):
-            return _get_history(press='up')
+            return _write_history_command(press='up')
 
         # inner function
         def _press_down_key(e):
-            return _get_history(press='down')
+            return _write_history_command(press='down')
 
         # bind
         self.bind('<KeyPress>', _press_key)
@@ -262,21 +288,20 @@ class PyConsole(ScrolledTextEx):
         """ for infinite loop handling """
 
         # inner function
-        def _wrapper():
+        def _execute_wrapper():
             # set thread id
             thread_id = threading.current_thread().native_id
             self.__threading_pool[thread_id] = thread_id
 
-            def _killer(e):
+            def _do_kill(e):
                 if self.__threading_pool.get(thread_id):
                     self.__kill_thread(thread_id)
-
                     self.__threading_pool.pop(thread_id)
                     self.__init_prompt()
 
             try:
                 # bind kill thread to ctr+c
-                self.__bind_ctr_c(_killer)
+                self.__bind_ctr_c(_do_kill)
 
                 # execute
                 self.__execute_command()
@@ -295,22 +320,24 @@ class PyConsole(ScrolledTextEx):
 
         # check running thread
         if len(self.__threading_pool) == 0:
-            threading.Thread(target=_wrapper).start()
+            threading.Thread(target=_execute_wrapper).start()
 
 
     def __execute_command(self) -> None:
         """ execute command
 
-        1. get an inputted strings.
-        2. execute the compiled command, if is not state 'wait'.
-        3. insert a result into text widget.
-        4. prompt.
+        1. commit an inputted string into the executor.
+        2. add the committed string into the history
+        3. compile the committed string, and execute it, if is not state 'wait'.
+        4. insert a result into the text widget.
+        5. auto scroll.
+        6. prompt.
 
         """
 
         # inner function
         def _commit():
-            command = self.__get_command_strings()
+            command = self.__get_command_string()
 
             # insert a new line
             self.insert(tk.INSERT, self.__NEWLINE)
@@ -325,30 +352,38 @@ class PyConsole(ScrolledTextEx):
         # inner function
         @std_forker(callback=_callback)
         def _execute():
+            # commit string
             committed_string = _commit()
             striped          = committed_string.strip()
 
             # append a committed string
             self.__committed_strings.append(committed_string)
-
-            #TODO-#2:
-            #self.__committed_strings_history.append(committed_string)
+            # add command into the history
+            self.__add_history(committed_string)
 
             # wait executing command
             if striped.endswith(':'):
+                # set wait flag
                 self.__wait_flag = True
 
             # execute the command
             elif (self.__wait_flag is False) or (striped == ''):
                 try:
+                    # compile and execute the command
                     compiled = code.compile_command(''.join(self.__committed_strings))
                     self._shell.runcode(compiled)
 
                 finally:
+                    # set wait flag
                     self.__wait_flag  = False
 
                     # clear committed strings
                     self.__committed_strings.clear()
+
+                    # add history '' and set index at the last
+                    history = self.__committed_string_history
+                    self.__add_history('')
+                    history._i = (len(history.get_history())-1)
 
 
         # execute run function
@@ -356,6 +391,7 @@ class PyConsole(ScrolledTextEx):
 
         # dump
         for std, r in self.__result.items():
+            #TODO-1#: color print
             if r != '':
                 self.insert(tk.INSERT, self.__result.get(std))
 
