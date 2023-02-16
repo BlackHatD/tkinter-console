@@ -11,10 +11,15 @@ from tkinter_console.utils.scrolledtext import ScrolledTextEx
 from tkinter_console.utils.decorator import std_forker
 
 
+__all__ = ['PyConsole']
+
+
 class PyConsole(ScrolledTextEx):
 
     def __init__(self, master, _locals, **kwargs):
         super(PyConsole, self).__init__(master=master, **kwargs)
+
+        self.__NEWLINE = '\n'
 
         # create interactive console instance
         self._shell = code.InteractiveConsole(_locals)
@@ -72,7 +77,7 @@ class PyConsole(ScrolledTextEx):
         self.__committed_strings = []
 
         # prompt
-        self.prompt()
+        self.__prompt()
 
 
     def init(self):
@@ -85,7 +90,7 @@ class PyConsole(ScrolledTextEx):
         # init prompt
         self.__init_prompt()
 
-        # run insert checker
+        # run walker
         self.__check_insert_walker()
 
         # bind
@@ -97,7 +102,7 @@ class PyConsole(ScrolledTextEx):
 
 
 
-    def prompt(self) -> None:
+    def __prompt(self) -> None:
         """ prompt
 
         Prompt '>>>' at the normal state, else '...' by default
@@ -107,10 +112,11 @@ class PyConsole(ScrolledTextEx):
 
         if self.__wait_flag is False:
             self.__used_prompt_string = self._prompt_string['normal']
-            self.insert(tk.END, self.__used_prompt_string)
+
         else:
             self.__used_prompt_string = self._prompt_string['wait']
-            self.insert(tk.END, self.__used_prompt_string)
+
+        self.insert(tk.END, self.__used_prompt_string)
 
         self.mark_gravity(self._prompt_mark, tk.LEFT)
 
@@ -136,7 +142,11 @@ class PyConsole(ScrolledTextEx):
 
     def __bind_ctr_c(self, func: Optional[Callable] = None) -> None:
         """ for bind Control-c """
+
+        # inner function
         def default_func(e):
+            if self.__wait_flag:
+                self.insert(tk.INSERT, self.__NEWLINE)
             self.__init_prompt()
 
         self.bind('<Control-c>', func if func else default_func)
@@ -172,7 +182,7 @@ class PyConsole(ScrolledTextEx):
                 line = '.'.join([row, str(prompt_length)])
                 self.mark_set(tk.INSERT, line)
 
-            #TODO: color print
+            #TODO-#1: color print
 
             self.after(rotate_time, checker)
 
@@ -215,7 +225,7 @@ class PyConsole(ScrolledTextEx):
 
         # inner function
         def _get_history(press='up'):
-            # TODO: insert command into history
+            # TODO-#2: insert command into history
 
             press = press.lower()
 
@@ -230,9 +240,11 @@ class PyConsole(ScrolledTextEx):
 
             return self.__do_not_do_anything()
 
+        # inner function
         def _press_up_key(e):
             return _get_history(press='up')
 
+        # inner function
         def _press_down_key(e):
             return _get_history(press='down')
 
@@ -248,14 +260,23 @@ class PyConsole(ScrolledTextEx):
 
     def __execute_command_as_thread(self):
         """ for infinite loop handling """
+
+        # inner function
         def _wrapper():
             # set thread id
             thread_id = threading.current_thread().native_id
             self.__threading_pool[thread_id] = thread_id
 
+            def _killer(e):
+                if self.__threading_pool.get(thread_id):
+                    self.__kill_thread(thread_id)
+
+                    self.__threading_pool.pop(thread_id)
+                    self.__init_prompt()
+
             try:
                 # bind kill thread to ctr+c
-                self.__bind_ctr_c(lambda e: self.__kill_thread(thread_id))
+                self.__bind_ctr_c(_killer)
 
                 # execute
                 self.__execute_command()
@@ -264,7 +285,13 @@ class PyConsole(ScrolledTextEx):
                 # reset bind
                 self.__bind_ctr_c()
 
-            self.__threading_pool.pop(thread_id)
+                # double check
+                #   reason why double check is
+                #   if ctr+'c' is pressed, in '__kill_thread' method,
+                #   the thread_id is popped
+                if self.__threading_pool.get(thread_id):
+                    self.__threading_pool.pop(thread_id)
+
 
         # check running thread
         if len(self.__threading_pool) == 0:
@@ -281,26 +308,31 @@ class PyConsole(ScrolledTextEx):
 
         """
 
-        def _commit_to():
+        # inner function
+        def _commit():
             command = self.__get_command_strings()
 
-            # add new line
-            self.insert(tk.INSERT, '\n')
+            # insert a new line
+            self.insert(tk.INSERT, self.__NEWLINE)
 
             return command
 
+        # inner function
         def _callback(result):
             # set result
             self.__result = result
 
+        # inner function
         @std_forker(callback=_callback)
         def _execute():
-            committed_string = _commit_to()
+            committed_string = _commit()
             striped          = committed_string.strip()
 
             # append a committed string
             self.__committed_strings.append(committed_string)
-            self.__committed_strings_history.append(committed_string)
+
+            #TODO-#2:
+            #self.__committed_strings_history.append(committed_string)
 
             # wait executing command
             if striped.endswith(':'):
@@ -309,12 +341,10 @@ class PyConsole(ScrolledTextEx):
             # execute the command
             elif (self.__wait_flag is False) or (striped == ''):
                 try:
-                    self.__is_running = True
                     compiled = code.compile_command(''.join(self.__committed_strings))
                     self._shell.runcode(compiled)
 
                 finally:
-                    self.__is_running = False
                     self.__wait_flag  = False
 
                     # clear committed strings
@@ -329,21 +359,21 @@ class PyConsole(ScrolledTextEx):
             if r != '':
                 self.insert(tk.INSERT, self.__result.get(std))
 
-        self.prompt()
+        # auto scroll
+        self.yview(tk.END)
+
+        # prompt
+        self.__prompt()
 
 
+    @staticmethod
+    def __kill_thread(thread_id):
+        # kill the thread
+        #   necessary importing ctypes
+        #   https://www.delftstack.com/howto/python/python-kill-thread/
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
+                                                   ctypes.py_object(SystemExit))
 
-    def __kill_thread(self, thread_id):
-        # check thread
-        if self.__threading_pool.get(thread_id):
-            # kill the thread
-            #   necessary importing ctypes
-            #   https://www.delftstack.com/howto/python/python-kill-thread/
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
-                                                       ctypes.py_object(SystemExit))
-
-            self.__threading_pool.pop(thread_id)
-            self.__init_prompt()
 
 
 
