@@ -33,8 +33,11 @@ class PyConsole(ScrolledTextEx):
         #-------------------------------------#
         # TODO: handling 'while True:'
         #-------------------------------------#
-        # self.__timeout            = 10
+        # Now ...orz...
+        #   input 'while True:' freeze
+        #-------------------------------------#
         # self.__is_running         = False
+        # self.__timeout            = 10
         #-------------------------------------#
 
         # wait flag
@@ -47,17 +50,14 @@ class PyConsole(ScrolledTextEx):
         self.__committed_strings  = []
 
 
-        self.init()
-
-
     @property
     def prompt_string(self) -> dict:
-        """:obj: 'dict' of :obj:'str': prompt string """
+        """ :obj: 'dict' of :obj:'str': prompt string """
         return self._prompt_string
 
-    def set_prompt_string(self, normal, wait='...', add_space=True):
+    def set_prompt_string(self, normal, wait='...', add_last_space=True):
         """ set prompt string """
-        space = ' ' if add_space else ''
+        space = ' ' if add_last_space else ''
         self._prompt_string['normal'] = normal + space
         self._prompt_string['wait']   = wait   + space
 
@@ -74,7 +74,7 @@ class PyConsole(ScrolledTextEx):
 
         # bind
         self.__bind_checking_action()
-        self.bind('<Return>', self.__on_enter_key)
+        self.bind('<Return>', self.__do_pressed_enter_key)
 
         return self
 
@@ -84,7 +84,8 @@ class PyConsole(ScrolledTextEx):
         Prompt '>>>' at the normal state, else '...' by default
         """
         self.mark_set(self._prompt_mark, tk.END)
-        self.mark_gravity(self._prompt_mark, tk.LEFT)
+        self.mark_gravity(self._prompt_mark, tk.RIGHT)
+
         if self.__wait_flag is False:
             self.__tmp_prompt_string = self._prompt_string['normal']
             self.insert(tk.END, self.__tmp_prompt_string)
@@ -93,8 +94,11 @@ class PyConsole(ScrolledTextEx):
             self.insert(tk.END, self.__tmp_prompt_string)
         self.mark_gravity(self._prompt_mark, tk.RIGHT)
 
+        self.mark_gravity(self._prompt_mark, tk.LEFT)
 
-    def __on_enter_key(self, event=None):
+
+    def __do_pressed_enter_key(self, event=None):
+        """ if pressed enter key, execute the inputted command """
         # execute the inputted strings
         self.__execute_command()
         return self.__do_not_do_anything()
@@ -111,13 +115,13 @@ class PyConsole(ScrolledTextEx):
 
         - press key
             - prevent the input position from going before the prompt
-            - now allowed up and down key
+            - not allowed 'up' and 'down' key
 
         - click
             prevent the input position moves to the cursor
 
         """
-        def press_key(event):
+        def _press_key(event):
             keysym = event.keysym.lower()
             if keysym in ('backspace', 'left', 'home'):
                 _, pos = self.index(tk.INSERT).split('.')
@@ -130,23 +134,24 @@ class PyConsole(ScrolledTextEx):
                 #-------------------------------------#
                 # TODO: need a check logic
                 #-------------------------------------#
+                # Now ...orz...
                 # '>>> ABC|' input 'home' key
                 # '|>>> ABC'
                 #-------------------------------------#
 
 
-        def on_click(state):
+        def _on_click(state):
             self.configure(state=state)
             self.mark_set(tk.INSERT, 'end - 1c')
 
         # bind
-        self.bind('<KeyPress>', press_key)
+        self.bind('<KeyPress>', _press_key)
         self.bind('<Up>'  , self.__do_not_do_anything)
         self.bind('<Down>', self.__do_not_do_anything)
 
         # bind click event
-        self.bind('<ButtonPress>'  , lambda e: on_click('disable'))
-        self.bind('<ButtonRelease>', lambda e: on_click('normal'))
+        self.bind('<ButtonPress>'  , lambda e: _on_click(state='disable'))
+        self.bind('<ButtonRelease>', lambda e: _on_click(state='normal'))
 
 
 
@@ -171,9 +176,8 @@ class PyConsole(ScrolledTextEx):
             return self.get(index, 'end - 1c')
 
         def _callback(output, _):
-            print(output)
+            # set result
             self._result = output
-
 
         @std_forker(callback=_callback)
         def _execute():
