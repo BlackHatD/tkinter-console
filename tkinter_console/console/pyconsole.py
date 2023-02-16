@@ -170,6 +170,7 @@ class PyConsole(ScrolledTextEx):
             if self.__wait_flag:
                 self.insert(tk.INSERT, self.__NEWLINE)
             self.__init_prompt()
+            self.__delete_line()
 
         self.bind('<Control-c>', func if func else default_func)
 
