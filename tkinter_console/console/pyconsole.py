@@ -1,11 +1,6 @@
 # -*- coding:utf-8 -*-
 import code
-import hashlib
-import queue
-import sys
-import threading
 import tkinter as tk
-from tkinter import ttk
 from typing import Optional
 
 
