@@ -8,12 +8,31 @@ from typing import Optional, Callable
 __all__ = ['std_forker']
 
 class std_forker:
+    """ Fork stdin, stdout, stderr """
+
     stdin     = sys.__stdin__.name
     stdout    = sys.__stdout__.name
     stderr    = sys.__stderr__.name
     traceback = traceback.__name__
 
     def __init__(self, callback: Optional[Callable] = None):
+        """ initialization method
+
+        Notes:
+            The 'callback' function is given 'result' at the first argument.
+
+        Examples:
+            >> def callback(result):
+            >>     print(result)
+            >>
+            >> @std_forker(callback=callback)
+            >> def something():
+            >>     ...
+
+        Args:
+            callback: callback func
+
+        """
 
         # callback(result)
         self._callback = (callback
@@ -38,6 +57,7 @@ class std_forker:
 
     def __call__(self, func):
 
+        # wrapper function
         def wrapper(*args, **kwargs):
 
             try:
