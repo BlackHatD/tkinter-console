@@ -10,25 +10,26 @@ from tkinter_console.console.pyconsole import PyConsole
 if __name__ == '__main__':
     root = tk.Tk()
 
-    text = PyConsole(root, locals(), wrap='none').init()
-    info  = tk.StringVar()
-    label = ttk.Label(root, textvariable=info)
+    console = PyConsole(root, locals(), wrap='none').init()
+    info    = tk.StringVar()
+    label   = ttk.Label(root, textvariable=info)
 
-    label.pack(fill=tk.BOTH, expand=True)
-    text.pack(fill=tk.BOTH, expand=True)
 
-    text.focus()
+    label.pack(fill=tk.X)
+    console.pack(fill=tk.BOTH, expand=True)
+
+    console.focus()
 
     def loop():
         global info
-        i = text.index(tk.INSERT)
-        s = text.get(i)
-        row, cursor = i.split('.')
-        info.set("(row, cursor)=({row}, {cursor})='{value}'".format(
-            row=row, cursor=cursor, value=s if s != '\n' else ''))
-        text.after(50, loop)
+        i = console.index(tk.INSERT)
+        s = console.get(i)
+        row, pos = i.split('.')
+        info.set("(row, pos)=({row}, {pos})='{value}'".format(
+            row=row, pos=pos, value=s if s != '\n' else ''))
+        console.after(50, loop)
 
-    text.after(50, loop)
+    console.after(50, loop)
 
 
 
