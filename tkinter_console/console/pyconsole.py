@@ -170,9 +170,9 @@ class PyConsole(ScrolledTextEx):
 
             return self.get(index, 'end - 1c')
 
-        def _callback(output, _):
+        def _callback(result):
             # set result
-            self._result = output
+            self._result = result
 
         @std_forker(callback=_callback)
         def _execute():
@@ -205,8 +205,7 @@ class PyConsole(ScrolledTextEx):
         _execute()
 
         # dump
-        result = self._result
-        for std, r in result.items():
+        for std, r in self._result.items():
             if r != '':
                 self.insert(tk.INSERT, self._result.get(std))
 

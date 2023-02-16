@@ -12,8 +12,7 @@ if __name__ == '__main__':
 
     shell = code.InteractiveConsole(locals())
 
-    def callback(output, result):
-        print(output)
+    def callback(result):
         print(result)
 
     @std_forker(callback=callback)

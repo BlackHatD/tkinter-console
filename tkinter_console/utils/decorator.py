@@ -15,13 +15,10 @@ class std_forker:
 
     def __init__(self, callback: Optional[Callable] = None):
 
-        # set functions
-        self._func: Optional[Callable] = None
-
-        # callback(output, result of func)
+        # callback(result)
         self._callback = (callback
                           if callback
-                          else lambda output, func_result: None)
+                          else lambda result: None)
 
         # for restoring
         self._org_stdin  = sys.stdin
@@ -32,16 +29,14 @@ class std_forker:
         self._func_result = None
 
         # for callback args
-        self._org_output = {self.stdin      : ''
+        self._result_fmt = {self.stdin      : ''
                             , self.stdout   : ''
                             , self.stderr   : ''
                             , self.traceback: ''}
-        self._output     = copy.deepcopy(self._org_output)
+        self._result     = copy.deepcopy(self._result_fmt)
 
 
     def __call__(self, func):
-        # set function at first
-        self._func = func
 
         def wrapper(*args, **kwargs):
 
@@ -54,7 +49,7 @@ class std_forker:
 
             except Exception:
                 # set traceback
-                self._output[self.traceback] = traceback.format_exc()
+                self._result[self.traceback] = traceback.format_exc()
 
             finally:
                 # set output
@@ -67,13 +62,13 @@ class std_forker:
 
                 # run callback
                 try:
-                    self._callback(self._output, self._func_result)
+                    self._callback(self._result)
 
                 except Exception:
                     traceback.print_exc()
 
                 # restore output
-                self._output = copy.deepcopy(self._org_output)
+                self._result = copy.deepcopy(self._result_fmt)
 
             return self._func_result
 
@@ -97,6 +92,6 @@ class std_forker:
     def __set_output(self, name, std):
         """ set output for callback function """
         std.seek(0)
-        self._output[name] = std.read()
+        self._result[name] = std.read()
         std.close()
 
