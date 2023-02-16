@@ -25,7 +25,7 @@ if __name__ == '__main__':
     root.title('LogConsoleExFrame Test')
 
     # for using 'expand_btn''s arg settings
-    root.minsize(width=840, height=0)
+    root.minsize(width=0, height=0)
     root.resizable(width=True, height=False)
 
 
