@@ -271,7 +271,7 @@ class PyConsole(ScrolledTextEx):
 
 
     def __check_insert_walker(self
-                              , rotate_time=50  # ms
+                              , rotate_time=500  # ms
                               ) -> None:
         # inner function
         def checker():
@@ -443,6 +443,7 @@ class PyConsole(ScrolledTextEx):
 
             # execute the command
             elif (self.__wait_flag is False) or (striped == ''):
+
                 try:
                     # compile and execute the command
                     compiled = code.compile_command(''.join(self.__committed_strings))
@@ -477,7 +478,7 @@ class PyConsole(ScrolledTextEx):
 
                 # add tags for highlighting
                 start_index = self.__concat_row_pos(row, 0)
-                end_index   = self.__concat_row_pos(self.__get_current_row(), 'end')
+                end_index   = self.__concat_row_pos(self.__get_current_row(), tk.END)
                 self.tag_add(std, start_index, end_index)
 
 
