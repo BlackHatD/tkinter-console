@@ -525,8 +525,8 @@ class PyConsole(ScrolledTextEx):
 
 
         # run watchdogs
-        # reason why the code is written is
-        # teh result may be highlighted
+        # reason, why the code is written here,
+        # is the dumped result may be highlighted
         self.__watchdogs_wait_flag = False
 
 
