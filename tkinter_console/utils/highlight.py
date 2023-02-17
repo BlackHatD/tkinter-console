@@ -21,6 +21,8 @@ class Highlight:
         self._normal_tags = {}
         self._regex_tags  = {}
 
+        self.wait = False
+
     def attach(self, master: tk.Text
                , start_index='1.0', end_index=tk.END):
         self._master      = master
@@ -75,9 +77,12 @@ class Highlight:
     def do_normal_highlighting(self) -> None:
         """ normal highlighting """
 
+        if self.wait:
+            return
+
         for key, kwargs in self._normal_tags.items():
             # remove tag at first
-            self._master.tag_remove(key, self.start_index, tk.END)
+            self._master.tag_remove(key, self.start_index, self.end_index)
 
             # set index
             index = self.start_index
@@ -101,6 +106,9 @@ class Highlight:
 
     def do_regex_highlighting(self):
         """ regex highlighting """
+        if self.wait:
+            return
+
         count = tk.IntVar()
 
         for tag, kwargs in self._regex_tags.items():
