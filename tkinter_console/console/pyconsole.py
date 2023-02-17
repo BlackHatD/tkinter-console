@@ -349,6 +349,13 @@ class PyConsole(ScrolledTextEx):
                 if self.__get_current_pos() <= self.__get_prompt_length():
                     return self.__do_not_do_anything()
 
+            elif self.__get_current_pos() < self.__get_prompt_length():
+                # check position
+                #   1. '>>>ABCDEFG': press 'fn'+'home'+'delete'
+                #   2. ''          : prompt string is deleted, so this check is necessary
+                self.__delete_line()
+                self.__prompt()
+
         # inner function
         def _write_history_command(press):
             # add the command into the history at first
