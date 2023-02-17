@@ -369,8 +369,8 @@ class PyConsole(ScrolledTextEx):
 
             #TODO-#1:
             if self.highlighter:
-                # delete tags
-                self.highlighter.delete_tags()
+                # set end index
+                self.highlighter.end_index = 'end - 1c'
 
             # insert a new line
             self.insert(tk.INSERT, self.__NEWLINE)
@@ -437,9 +437,9 @@ class PyConsole(ScrolledTextEx):
         self.__prompt()
 
         # TODO-#1:
-        # set start_index and restore tags
-        self.highlighter.start_index = self.__get_prompt_end_index()
-        self.highlighter.restore_tags()
+        # set start index
+        if self.highlighter:
+            self.highlighter.start_index = self.__get_prompt_end_index()
 
 
     @staticmethod
