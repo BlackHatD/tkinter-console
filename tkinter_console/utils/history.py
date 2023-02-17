@@ -9,8 +9,8 @@ class History(object):
     """
 
     def __init__(self, history_limit=10000):
-        self._list     = ['']
-        self._index    = 0
+        self._list  = ['']
+        self._index = 0
         self._limit = history_limit
 
     def get_index(self, i):
