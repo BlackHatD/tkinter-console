@@ -20,6 +20,8 @@ author_email         = ''
 description          = 'tkinter console'
 keywords             = []
 
+LICENSE              = 'The GNU GENERAL PUBLIC LICENSE Version 2'
+
 zip_safe             = False
 include_package_data = True
 
@@ -62,7 +64,7 @@ setup(
     , author=author
     , author_email=author_email
     , url=url
-    , license='The GNU GENERAL PUBLIC LICENSE Version 2'
+    , license=LICENSE
     , packages=find_packages(
         include=['{package_name}'.format(package_name=package_name)
                  , '{package_name}.*'.format(package_name=package_name)]
