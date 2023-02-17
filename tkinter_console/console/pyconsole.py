@@ -129,37 +129,52 @@ class PyConsole(ScrolledTextEx):
         self.__execute_command_as_thread()
         return self.__do_not_do_anything()
 
+    @staticmethod
+    def __concat_row_pos(row, pos) -> str:
+        """ concat row and pos """
+        return '.'.join((str(row), str(pos)))
 
-    def __get_current_index(self) -> list:
+    def __get_prompt_length(self) -> int:
+        """ get prompt length """
+        return len(self.__used_prompt_string)
+
+    def __get_current_split_index(self) -> list:
         """ return (row,pos) """
         return self.index(tk.INSERT).split('.')
 
-    def __get_current_row(self) -> str:
+    def __get_current_row(self) -> int:
         """ return current row """
-        return self.__get_current_index()[0]
+        return int(self.__get_current_split_index()[0])
 
-    def __get_current_pos(self) -> str:
+    def __get_current_pos(self) -> int:
         """ return current insert pos """
-        return self.__get_current_index()[1]
+        return int(self.__get_current_split_index()[1])
 
     def __get_prompt_end_index(self) -> str:
         """ get prompt end line """
-        row, pos      = self.__get_current_index()
-        prompt_length = len(self.__used_prompt_string)
-        return '.'.join([row, str(prompt_length)])
-
-    def __get_command_string(self) -> str:
-        """ get only command strings """
-        return self.get(self.__get_prompt_end_index(), tk.END)
+        row           = self.__get_current_row()
+        prompt_length = self.__get_prompt_length()
+        return self.__concat_row_pos(row, prompt_length)
 
     def __delete_line(self) -> None:
         """ delete command line """
         self.delete(self.__get_prompt_end_index(), 'end-1c')
 
+    def __get_command_string(self) -> str:
+        """ get only command strings """
+        return self.get(self.__get_prompt_end_index(), tk.END)
+
     def __write_command(self, command: str) -> None:
         """ write command string into text widget """
         self.__delete_line()
-        self.insert(tk.INSERT, command if command else '')
+        self.insert(self.__get_prompt_end_index()
+                    , command if command else '')
+
+    def __clear_and_write_newline(self) -> None:
+        """ clear and write a new line """
+        self.insert(self.__get_prompt_end_index(), self.__NEWLINE)
+        self.__init_prompt()
+        self.yview(tk.END)
 
 
     def __bind_ctr_c(self, func: Optional[Callable] = None) -> None:
@@ -167,10 +182,7 @@ class PyConsole(ScrolledTextEx):
 
         # inner function
         def default_func(e):
-            if self.__wait_flag:
-                self.insert(tk.INSERT, self.__NEWLINE)
-            self.__init_prompt()
-            self.__delete_line()
+            self.__clear_and_write_newline()
 
         self.bind('<Control-c>', func if func else default_func)
 
@@ -178,8 +190,8 @@ class PyConsole(ScrolledTextEx):
     def __add_history(self, command: str) -> None:
         """ add a command in the history """
         # right strip at first
-        command = command.rstrip()
-        history = self.__committed_string_history
+        command: str     = command.rstrip()
+        history: History = self.__committed_string_history
 
         # check the command for whether adding or not
         if command != history.current():
@@ -203,12 +215,8 @@ class PyConsole(ScrolledTextEx):
             #   but bellow patterns can't be checked
             #     'fn' + 'home' key and so on...
             #   so in the function check these patterns
-            row, pos = self.__get_current_index()
-            prompt_length = len(self.__used_prompt_string)
-
-            if int(pos) < prompt_length:
-                line = '.'.join([row, str(prompt_length)])
-                self.mark_set(tk.INSERT, line)
+            if self.__get_current_pos() < self.__get_prompt_length():
+                self.mark_set(tk.INSERT, self.__get_prompt_end_index())
 
             #TODO-#1: color print
 
@@ -232,19 +240,18 @@ class PyConsole(ScrolledTextEx):
         """
 
         # inner function
-        def _press_key(event):
-            state: int  = event.state if hasattr(event, 'state') else 0
+        def _do_pressed_key(event):
+            state : int = event.state if hasattr(event, 'state') else 0
             keysym: str = event.keysym.lower()
             # other patterns are checked in '__check_insert_walker'
             if (keysym in ('backspace', 'left', 'home')
                     # for ctl+h
                     or state == 4):
 
-                pos = self.__get_current_pos()
                 # check position
                 #   '>>>|ABC' : allowed
                 #   '>>|>ABC' : not allowed
-                if int(pos) < (len(self.__used_prompt_string) + 1):
+                if self.__get_current_pos() <= self.__get_prompt_length():
                     return self.__do_not_do_anything()
 
         # inner function
@@ -253,7 +260,7 @@ class PyConsole(ScrolledTextEx):
             self.mark_set(tk.INSERT, 'end - 1c')
 
         # inner function
-        def _write_history_command(press='up'):
+        def _write_history_command(press):
             # add the command into the history at first
             self.__add_history(self.__get_command_string())
 
@@ -267,18 +274,10 @@ class PyConsole(ScrolledTextEx):
 
             return self.__do_not_do_anything()
 
-        # inner function
-        def _press_up_key(e):
-            return _write_history_command(press='up')
-
-        # inner function
-        def _press_down_key(e):
-            return _write_history_command(press='down')
-
         # bind
-        self.bind('<KeyPress>', _press_key)
-        self.bind('<Up>'      , _press_up_key)
-        self.bind('<Down>'    , _press_down_key)
+        self.bind('<KeyPress>', _do_pressed_key)
+        self.bind('<Up>'      , lambda e: _write_history_command(press='up'))
+        self.bind('<Down>'    , lambda e: _write_history_command(press='down'))
 
         # bind click event
         self.bind('<ButtonPress>'  , lambda e: _on_click(state='disable'))
@@ -296,9 +295,12 @@ class PyConsole(ScrolledTextEx):
 
             def _do_kill(e):
                 if self.__threading_pool.get(thread_id):
+                    # kill thread
                     self.__kill_thread(thread_id)
+                    # pop thread id from threading pool
                     self.__threading_pool.pop(thread_id)
-                    self.__init_prompt()
+                    # clear and write new line
+                    self.__clear_and_write_newline()
 
             try:
                 # bind kill thread to ctr+c
@@ -338,7 +340,10 @@ class PyConsole(ScrolledTextEx):
 
         # inner function
         def _commit():
-            command = self.__get_command_string()
+            # move the insert position to end at first
+            self.mark_set(tk.INSERT, tk.END)
+
+            command: str = self.__get_command_string()
 
             # insert a new line
             self.insert(tk.INSERT, self.__NEWLINE)
@@ -354,8 +359,9 @@ class PyConsole(ScrolledTextEx):
         @std_forker(callback=_callback)
         def _execute():
             # commit string
-            committed_string = _commit()
-            striped          = committed_string.strip()
+            committed_string: str = _commit()
+            striped         : str = committed_string.strip()
+            wait_keyword    : str = ':'
 
             # append a committed string
             self.__committed_strings.append(committed_string)
@@ -363,7 +369,7 @@ class PyConsole(ScrolledTextEx):
             self.__add_history(committed_string)
 
             # wait executing command
-            if striped.endswith(':'):
+            if striped.endswith(wait_keyword):
                 # set wait flag
                 self.__wait_flag = True
 
@@ -382,8 +388,9 @@ class PyConsole(ScrolledTextEx):
                     self.__committed_strings.clear()
 
                     # add history '' and set index at the last
-                    history = self.__committed_string_history
+                    history: History = self.__committed_string_history
                     self.__add_history('')
+                    # hack the history index
                     history._i = (len(history.get_history())-1)
 
 
