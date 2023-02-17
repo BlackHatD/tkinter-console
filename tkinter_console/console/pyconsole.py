@@ -61,6 +61,7 @@ class PyConsole(ScrolledTextEx):
         self._prompt_string['wait']   = wait   + space
 
         # initialize prompt
+        self.delete('0.0', tk.END)
         self.__init_prompt()
 
 
@@ -72,6 +73,7 @@ class PyConsole(ScrolledTextEx):
 
         """
         # init prompt
+        self.delete('0.0', tk.END)
         self.__init_prompt()
 
         # run walker
@@ -101,7 +103,6 @@ class PyConsole(ScrolledTextEx):
 
         # prompt
         self.__prompt()
-
 
 
     def __prompt(self) -> None:
