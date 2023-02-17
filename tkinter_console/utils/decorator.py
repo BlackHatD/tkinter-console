@@ -22,12 +22,20 @@ class std_forker:
             The 'callback' function is given 'result' at the first argument.
 
         Examples:
+            >> @std_forker()
+            >> def something():
+            >>   print(help())
+            >>
+            >> something()
+
             >> def callback(result):
-            >>     print(result)
+            >>   print(result)
             >>
             >> @std_forker(callback=callback)
             >> def something():
-            >>     ...
+            >>   print(help())
+            >>
+            >> something()
 
         Args:
             callback: callback func
