@@ -10,6 +10,7 @@ from typing import Optional, Callable
 from tkinter_console.utils.scrolledtext import ScrolledTextEx
 from tkinter_console.utils.decorator import std_forker
 from tkinter_console.utils.history import History
+from tkinter_console.utils.highlight import Highlight
 
 
 __all__ = ['PyConsole']
@@ -51,72 +52,18 @@ class PyConsole(ScrolledTextEx):
         self.__committed_string_history: History = History()
 
         #TODO-#1: color
-        self.__color_tags = {}
+        self.__highlighter: Optional[Highlight] = None
+
 
     #TODO-#1
-    def __register_tag(self, name, **kwargs):
-        self.tag_configure(name, **kwargs)
+    @property
+    def highlighter(self):
+        return self.__highlighter
 
     #TODO-#1
-    def __register_tags(self, tags: dict):
-        for tag, kwargs in tags.items():
-            self.__register_tag(tag, **kwargs)
-
-    #TODO-#1
-    def set_color(self, key, **kwargs):
-        self.__color_tags[key] = kwargs
-        self.__register_tags(self.__color_tags)
-
-
-    # TODO-#1
-    def __do_normal_highlight(self):
-
-        for key, kwargs in self.__color_tags.items():
-            # remove tag at first
-            self.tag_remove(key, self.__get_prompt_end_index(), tk.END)
-
-            # set index
-            index = self.__get_prompt_end_index()
-
-            while True:
-                pattern = r'\m{}\M'.format(key)
-
-                # search
-                index = self.search(pattern, index, regexp=True, stopindex=tk.END)
-
-                if not index:
-                    break
-
-                last_index = '%s+%sc' % (index, len(key))
-                # add tag
-                self.tag_add(key, index, last_index)
-                # set last index
-                index = last_index
-
-
-    def __do_custom_highlight(self):
-        count = tk.IntVar()
-        regex_pattern = [r'".*"'        # double
-                         , r'#.*'       # comment
-                         , r"'''.*'''"
-                         , r"'.*'"      # single
-                         ]
-        self.tag_configure('lime', foreground='lime')
-        for pattern in regex_pattern:
-            self.mark_set("start", self.__get_prompt_end_index())
-            self.mark_set("end", tk.END)
-            num = int(regex_pattern.index(pattern))
-            while True:
-                index = self.search(pattern, "start", "end", count=count, regexp=True)
-                if index == '':
-                    break
-                if num == 2:
-                    self.tag_add('lime', index, "%s+%sc" % (index, count.get()))
-                self.mark_set("start", "%s+%sc" % (index, count.get()))
-
-
-
-
+    def attach_highlighter(self, highlighter: Highlight):
+        self.__highlighter = highlighter
+        highlighter.attach(self, self.__get_prompt_end_index())
 
 
     @property
@@ -145,9 +92,6 @@ class PyConsole(ScrolledTextEx):
         # init prompt
         self.delete('0.0', tk.END)
         self.__init_prompt()
-
-        # register colors
-        self.__register_tags(self.__color_tags)
 
         # bind
         self.__bind_checking_action()
@@ -281,7 +225,7 @@ class PyConsole(ScrolledTextEx):
 
 
     def __check_insert_walker(self
-                              , rotate_time=20  # ms
+                              , rotate_time=50  # ms
                               ) -> None:
         # inner function
         def checker():
@@ -294,8 +238,9 @@ class PyConsole(ScrolledTextEx):
                 self.mark_set(tk.INSERT, self.__get_prompt_end_index())
 
             #TODO-#1: color print
-            self.__do_normal_highlight()
-            self.__do_custom_highlight()
+            if self.__highlighter:
+                self.__highlighter.do_normal_highlight()
+                self.__highlighter.do_regex_highlight()
 
             self.after(rotate_time, checker)
 
@@ -422,6 +367,11 @@ class PyConsole(ScrolledTextEx):
 
             command: str = self.__get_command_string()
 
+            #TODO-#1:
+            if self.highlighter:
+                # delete tags
+                self.highlighter.delete_tags()
+
             # insert a new line
             self.insert(tk.INSERT, self.__NEWLINE)
 
@@ -485,6 +435,11 @@ class PyConsole(ScrolledTextEx):
 
         # prompt
         self.__prompt()
+
+        # TODO-#1:
+        # set start_index and restore tags
+        self.highlighter.start_index = self.__get_prompt_end_index()
+        self.highlighter.restore_tags()
 
 
     @staticmethod
