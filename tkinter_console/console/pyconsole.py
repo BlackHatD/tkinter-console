@@ -26,8 +26,11 @@ class PyConsole(ScrolledTextEx):
         self._shell = code.InteractiveConsole(_locals)
         self.__result: Optional[dict] = None
 
-        self._prompt_mark   = 'prompt'
-        self._prompt_string = {'normal': '>>> ', 'wait': '... '}
+        self._prompt_mark       = 'prompt'
+        self._prompt_normal_tag = 'normal'
+        self._prompt_wait_tag   = 'wait'
+        self._prompt_string     = {self._prompt_normal_tag: '>>> '
+                                   , self._prompt_wait_tag: '... '}
 
         # this parameter will be switched '>>>' or '...'
         # (set in '__init_prompt' method at the first time)
@@ -47,18 +50,85 @@ class PyConsole(ScrolledTextEx):
         # for getting command in history
         self.__committed_string_history: History = History()
 
+        #TODO-#1: color
+        self.__color_tags = {}
+
+    #TODO-#1
+    def __register_tag(self, name, **kwargs):
+        self.tag_configure(name, **kwargs)
+
+    #TODO-#1
+    def __register_tags(self, tags: dict):
+        for tag, kwargs in tags.items():
+            self.__register_tag(tag, **kwargs)
+
+    #TODO-#1
+    def set_color(self, key, **kwargs):
+        self.__color_tags[key] = kwargs
+        self.__register_tags(self.__color_tags)
+
+
+    # TODO-#1
+    def __do_normal_highlight(self):
+
+        for key, kwargs in self.__color_tags.items():
+            # remove tag at first
+            self.tag_remove(key, self.__get_prompt_end_index(), tk.END)
+
+            # set index
+            index = self.__get_prompt_end_index()
+
+            while True:
+                pattern = r'\m{}\M'.format(key)
+
+                # search
+                index = self.search(pattern, index, regexp=True, stopindex=tk.END)
+
+                if not index:
+                    break
+
+                last_index = '%s+%sc' % (index, len(key))
+                # add tag
+                self.tag_add(key, index, last_index)
+                # set last index
+                index = last_index
+
+
+    def __do_custom_highlight(self):
+        count = tk.IntVar()
+        regex_pattern = [r'".*"'        # double
+                         , r'#.*'       # comment
+                         , r"'''.*'''"
+                         , r"'.*'"      # single
+                         ]
+        self.tag_configure('lime', foreground='lime')
+        for pattern in regex_pattern:
+            self.mark_set("start", self.__get_prompt_end_index())
+            self.mark_set("end", tk.END)
+            num = int(regex_pattern.index(pattern))
+            while True:
+                index = self.search(pattern, "start", "end", count=count, regexp=True)
+                if index == '':
+                    break
+                if num == 2:
+                    self.tag_add('lime', index, "%s+%sc" % (index, count.get()))
+                self.mark_set("start", "%s+%sc" % (index, count.get()))
+
+
+
+
+
 
     @property
     def prompt_string(self) -> dict:
         """ :obj: 'dict' of :obj:'str': prompt string """
         return self._prompt_string
 
-
     def set_prompt_string(self, normal, wait='...', add_last_space=True):
         """ set prompt string """
         space = ' ' if add_last_space else ''
-        self._prompt_string['normal'] = normal + space
-        self._prompt_string['wait']   = wait   + space
+        self._prompt_string[self._prompt_normal_tag] = normal + space
+        self._prompt_string[self._prompt_wait_tag]   = wait   + space
 
         # initialize prompt
         self.delete('0.0', tk.END)
@@ -76,13 +146,16 @@ class PyConsole(ScrolledTextEx):
         self.delete('0.0', tk.END)
         self.__init_prompt()
 
-        # run walker
-        self.__check_insert_walker()
+        # register colors
+        self.__register_tags(self.__color_tags)
 
         # bind
         self.__bind_checking_action()
         self.__bind_ctr_c()
         self.bind('<Return>', self.__do_pressed_enter_key)
+
+        # run walker
+        self.__check_insert_walker()
 
         return self
 
@@ -90,7 +163,7 @@ class PyConsole(ScrolledTextEx):
     def __init_prompt(self):
         """ initialize prompt """
         # set prompt string
-        self.__used_prompt_string = self._prompt_string['normal']
+        self.__used_prompt_string = self._prompt_string[self._prompt_normal_tag]
 
         # set wait flag as False
         self.__wait_flag = False
@@ -114,10 +187,10 @@ class PyConsole(ScrolledTextEx):
         self.mark_gravity(self._prompt_mark, tk.RIGHT)
 
         if self.__wait_flag is False:
-            self.__used_prompt_string = self._prompt_string['normal']
+            self.__used_prompt_string = self._prompt_string[self._prompt_normal_tag]
 
         else:
-            self.__used_prompt_string = self._prompt_string['wait']
+            self.__used_prompt_string = self._prompt_string[self._prompt_wait_tag]
 
         self.insert(tk.END, self.__used_prompt_string)
 
@@ -221,6 +294,8 @@ class PyConsole(ScrolledTextEx):
                 self.mark_set(tk.INSERT, self.__get_prompt_end_index())
 
             #TODO-#1: color print
+            self.__do_normal_highlight()
+            self.__do_custom_highlight()
 
             self.after(rotate_time, checker)
 
