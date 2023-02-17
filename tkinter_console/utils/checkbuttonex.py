@@ -7,7 +7,6 @@ __all__ = ['CheckButtonEx']
 class CheckButtonEx(ttk.Checkbutton):
     def __init__(self, parent, *args, **kwargs):
         self.__flag: bool          = kwargs.pop('flag')
-        self.__text: str           = kwargs['text']
         self.__var : tk.BooleanVar = tk.BooleanVar()
 
         self.__var.set(self.__flag)
