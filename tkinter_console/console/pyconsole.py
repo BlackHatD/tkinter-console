@@ -392,7 +392,7 @@ class PyConsole(ScrolledTextEx):
                     history: History = self.__committed_string_history
                     self.__add_history('')
                     # hack the history index
-                    history._i = (len(history.get_history())-1)
+                    history._index = (len(history.get_history()) - 1)
 
 
         # execute run function

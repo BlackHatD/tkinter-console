@@ -9,40 +9,40 @@ class History(object):
     """
 
     def __init__(self, history_limit=10000):
-        self._l     = ['']
-        self._i     = 0
+        self._list     = ['']
+        self._index    = 0
         self._limit = history_limit
 
     def get_index(self, i):
-        return self._l[i]
+        return self._list[i]
 
     def get_history(self):
-        return self._l
+        return self._list
 
     def next(self):
-        i = self._i + 1
-        if i == len(self._l):
+        i = self._index + 1
+        if i == len(self._list):
             return None
-        self._i += 1
-        return self._l[self._i]
+        self._index += 1
+        return self._list[self._index]
 
     def prev(self):
-        if self._i < 0:
-            self._i = 0
+        if self._index < 0:
+            self._index = 0
 
-        if self._i == 0:
+        if self._index == 0:
             return None
-        self._i -= 1
-        return self._l[self._i]
+        self._index -= 1
+        return self._list[self._index]
 
     def add(self, s):
-        if self._i < self._limit:
-            self._i += 1
+        if self._index < self._limit:
+            self._index += 1
         else:
-            self._l.pop(0)
-        self._l.append(s)
+            self._list.pop(0)
+        self._list.append(s)
 
     def current(self):
-        return self._l[self._i]
+        return self._list[self._index]
 
 
