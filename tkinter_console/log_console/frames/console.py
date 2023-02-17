@@ -122,6 +122,7 @@ class LogConsoleFrame(ttk.Frame):
 
         # set a format and add the handler
         self.__queue_handler.setFormatter(self._log_formatter)
+        self.__queue_handler.setLevel(DEBUG)
         self.logger.addHandler(self.__queue_handler)
 
 
