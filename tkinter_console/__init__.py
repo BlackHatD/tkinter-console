@@ -1,4 +1,8 @@
 # -*- coding:utf-8 -*-
+from tkinter_console.console import (
+    PyConsole
+)
+
 from tkinter_console.log_console import (
     LogConsoleFrame
     , LogSelectorFrame
