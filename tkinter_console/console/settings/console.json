@@ -1,0 +1,97 @@
+{
+  "console": {
+    "NOTE": "'kwargs' is the configure kwargs",
+    "kwargs": {
+      "foreground": "silver",
+      "background": "black",
+      "insertbackground": "silver",
+      "relief": "ridge"
+    },
+
+    "prompt": {
+      "normal": ">>> ",
+      "wait": "... ",
+      "NOTE": "'kwargs' is the tag_configure kwargs",
+      "kwargs": {
+        "foreground": "steelblue"
+      }
+    },
+
+    "std": {
+      "stdin": {
+        "NOTE": "'kwargs' is the tag_configure kwargs",
+        "kwargs": {}
+      },
+      "stdout": {
+        "NOTE": "'kwargs' is the tag_configure kwargs",
+        "kwargs": {
+          "foreground": "silver"
+        }
+      },
+      "stderr": {
+        "NOTE": "'kwargs' is the tag_configure kwargs",
+        "kwargs": {
+          "foreground": "darkred"
+        }
+      },
+      "traceback": {
+        "NOTE": "'kwargs' is the tag_configure kwargs",
+        "kwargs": {
+          "foreground": "darkred"
+        }
+      }
+    }
+  },
+
+  "syntax": {
+
+    "builtins": {
+      "NOTE": "'kwargs' is the tag_configure kwargs",
+      "kwargs": {
+        "foreground": "peachpuff"
+      }
+
+    },
+
+    "normal": {
+
+      "class": {
+        "NOTE": "'kwargs' is the tag_configure kwargs",
+        "kwargs": {
+          "foreground": "orange"
+        }
+      },
+
+      "def": {
+        "kwargs": {
+          "foreground": "deepskyblue"
+        }
+      }
+    },
+
+    "regex": {
+
+      "comment": {
+        "NOTE": "'kwargs' is the tag_configure kwargs",
+        "kwargs": {
+          "pattern": "#.*",
+          "foreground": "dimgray"
+        }
+      },
+
+      "double_quotation": {
+        "kwargs": {
+          "pattern": "\".*?\"",
+          "foreground": "forestgreen"
+        }
+      },
+
+      "single_quotation": {
+        "kwargs": {
+          "pattern": "'.*?'",
+          "foreground": "forestgreen"
+        }
+      }
+    }
+  }
+}
