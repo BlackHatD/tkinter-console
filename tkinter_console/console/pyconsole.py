@@ -51,7 +51,7 @@ class PyConsole(ScrolledTextEx):
         # for getting command in history
         self.__committed_string_history: History = History()
 
-        #TODO-#1: color
+        # for highlighting
         self.__highlighter: Optional[Highlight] = None
         self.__prompt_tags = {self._prompt_normal_tag: {}
                               , self._prompt_wait_tag: {}}
@@ -61,44 +61,29 @@ class PyConsole(ScrolledTextEx):
                               , std_forker.stderr   : {}
                               , std_forker.traceback: {}}
 
-    #TODO-#1:
-    def __register_tags(self):
-        def _register(tags):
-            for k, v in tags.items():
-                self.tag_configure(k, **v)
-        _register(self.__prompt_tags)
-        _register(self.__std_tags)
+    def init(self):
+        """ initialization method
 
+        Returns:
+            PyConsole: instance
 
-    def set_prompt_tags(self, **kwargs):
-        for values in self.__prompt_tags.values():
-            values.update(**kwargs)
+        """
+        # register tags at first
         self.__register_tags()
 
-    def set_std_tag(self, std, **kwargs):
-        self.__std_tags[std].update(**kwargs)
-        self.__register_tags()
+        # init prompt
+        self.delete('0.0', tk.END)
+        self.__init_prompt()
 
-    def __add_prompt_tags(self):
-        for tag in self.__prompt_tags:
-            start_index = self.__concat_row_pos(self.__get_current_row(), '0')
-            end_index = self.__get_prompt_end_index()
-            self.tag_add(tag, start_index, end_index)
+        # bind
+        self.__bind_checking_action()
+        self.__bind_ctr_c()
+        self.bind('<Return>', self.__do_pressed_enter_key)
 
+        # run walker
+        self.__check_insert_walker()
 
-
-
-
-    #TODO-#1
-    @property
-    def highlighter(self):
-        return self.__highlighter
-
-    #TODO-#1
-    def attach_highlighter(self, highlighter: Highlight):
-        self.__highlighter = highlighter
-        highlighter.attach(self, self.__get_prompt_end_index())
-
+        return self
 
     @property
     def prompt_string(self) -> dict:
@@ -115,30 +100,51 @@ class PyConsole(ScrolledTextEx):
         self.delete('0.0', tk.END)
         self.__init_prompt()
 
+    @property
+    def highlighter(self):
+        return self.__highlighter
 
-    def init(self):
-        """ initialization method
+    def attach_highlighter(self, highlighter: Highlight):
+        """ attach highlighter instance """
+        self.__highlighter = highlighter
+        highlighter.attach(master=self, start_index=self.__get_prompt_end_index())
 
-        Returns:
-            PyConsole: instance
-
-        """
-        #TODO-#1
+    def set_prompt_tag(self, **kwargs) -> None:
+        """ set prompt_tags """
+        for values in self.__prompt_tags.values():
+            values.update(**kwargs)
         self.__register_tags()
 
-        # init prompt
-        self.delete('0.0', tk.END)
-        self.__init_prompt()
+    def set_std_tag(self, std, **kwargs) -> None:
+        """ set std tag
 
-        # bind
-        self.__bind_checking_action()
-        self.__bind_ctr_c()
-        self.bind('<Return>', self.__do_pressed_enter_key)
+        Args:
+            std      : use std_forker's class parameter
+            **kwargs : foreground, background, and so on
 
-        # run walker
-        self.__check_insert_walker()
+        Examples:
+            >> obj.set_std_tag(std_forker.stderr, foreground='red')
 
-        return self
+        """
+        self.__std_tags[std].update(**kwargs)
+        self.__register_tags()
+
+
+    def __register_tags(self) -> None:
+        """ register tags """
+        def _register(tags):
+            for k, v in tags.items():
+                self.tag_configure(k, **v)
+        _register(self.__prompt_tags)
+        _register(self.__std_tags)
+
+
+    def __add_prompt_tags(self):
+        """ add prompt tags, it's used in '__prompt' method """
+        for tag in self.__prompt_tags:
+            start_index = self.__concat_row_pos(self.__get_current_row(), '0')
+            end_index = self.__get_prompt_end_index()
+            self.tag_add(tag, start_index, end_index)
 
 
     def __init_prompt(self):
@@ -177,7 +183,7 @@ class PyConsole(ScrolledTextEx):
 
         self.mark_gravity(self._prompt_mark, tk.LEFT)
 
-        # TODO-#1
+        # add prompt tags for highlighting
         self.__add_prompt_tags()
 
 
@@ -277,7 +283,7 @@ class PyConsole(ScrolledTextEx):
             if self.__get_current_pos() < self.__get_prompt_length():
                 self.mark_set(tk.INSERT, self.__get_prompt_end_index())
 
-            #TODO-#1: color print
+            # highlighting
             if self.__highlighter:
                 self.__highlighter.do_normal_highlighting()
                 self.__highlighter.do_regex_highlighting()
@@ -460,7 +466,7 @@ class PyConsole(ScrolledTextEx):
         _execute()
 
 
-        # TODO-#1:
+        # get the current row for highlighting
         row = self.__get_current_row()
 
         # dump
@@ -469,8 +475,7 @@ class PyConsole(ScrolledTextEx):
                 # insert result at first
                 self.insert(tk.INSERT, self.__result.get(std))
 
-                # TODO-#1:
-                # add tags
+                # add tags for highlighting
                 start_index = self.__concat_row_pos(row, 0)
                 end_index   = self.__concat_row_pos(self.__get_current_row(), 'end')
                 self.tag_add(std, start_index, end_index)
@@ -482,9 +487,8 @@ class PyConsole(ScrolledTextEx):
         # prompt
         self.__prompt()
 
-        # TODO-#1:
-        # set start index
         if self.highlighter:
+            # set start index
             self.highlighter.start_index = self.__get_prompt_end_index()
 
 
