@@ -172,6 +172,7 @@ class PyConsole(ScrolledTextEx):
 
     def __clear_and_write_newline(self) -> None:
         """ clear and write a new line """
+        self.__delete_line()
         self.insert(self.__get_prompt_end_index(), self.__NEWLINE)
         self.__init_prompt()
         self.yview(tk.END)
