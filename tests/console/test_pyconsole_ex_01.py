@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 import tkinter as tk
-from tkinter_console.console.pyconsole_ex import PyConsoleEx
+from tkinter_console import PyConsoleEx
 
 if __name__ == '__main__':
     root = tk.Tk()
