@@ -23,12 +23,16 @@ class PyConsole(ScrolledTextEx):
         super(PyConsole, self).__init__(master=master, **kwargs)
 
         self.__NEWLINE = '\n'
-        self.__WATCH_DOGS_ROTATE = 100  # ms
 
         # create interactive console instance
         self._shell = code.InteractiveConsole(_locals)
         self.__result: Optional[dict] = None
 
+        # watchdogs settings
+        self.__watchdogs_rotate    = 10  # ms
+        self.__watchdogs_wait_flag = False
+
+        # prompt settings
         self._prompt_mark       = 'prompt'
         self._prompt_normal_tag = 'normal'
         self._prompt_wait_tag   = 'wait'
@@ -93,6 +97,16 @@ class PyConsole(ScrolledTextEx):
         self.pack_configure(fill=tk.BOTH, expand=True)
 
         return self
+
+    def set_watchdogs_rotation_time(self, ms) -> None:
+        """ set watchdogs rotation time
+
+        If you feel the process is too slow, use this method before initialize.
+
+        Args:
+            ms: ms
+        """
+        self.__watchdogs_rotate = ms
 
     @property
     def prompt_string(self) -> dict:
@@ -283,22 +297,23 @@ class PyConsole(ScrolledTextEx):
         """ run watchdogs """
 
         # set rotate time
-        rotate_time = self.__WATCH_DOGS_ROTATE
+        rotate_time = self.__watchdogs_rotate
 
         # inner function
         def checker():
-            # for prevent the input position from going before the prompt
-            #   input keys are checked in '__bind_checking_action'
-            #   but bellow patterns can't be checked
-            #     'fn' + 'home' key and so on...
-            #   so in the function check these patterns
-            if self.__get_current_pos() < self.__get_prompt_length():
-                self.mark_set(tk.INSERT, self.__get_prompt_end_index())
+            if not self.__watchdogs_wait_flag:
+                # for prevent the input position from going before the prompt
+                #   input keys are checked in '__bind_checking_action'
+                #   but bellow patterns can't be checked
+                #     'fn' + 'home' key and so on...
+                #   so in the function check these patterns
+                if self.__get_current_pos() < self.__get_prompt_length():
+                    self.mark_set(tk.INSERT, self.__get_prompt_end_index())
 
-            # highlighting
-            if self.__highlighter:
-                self.__highlighter.do_normal_highlighting()
-                self.__highlighter.do_regex_highlighting()
+                # highlighting
+                if self.__highlighter:
+                    self.__highlighter.do_normal_highlighting()
+                    self.__highlighter.do_regex_highlighting()
 
             self.after(rotate_time, checker)
 
@@ -323,7 +338,7 @@ class PyConsole(ScrolledTextEx):
         def _do_pressed_key(event):
             state : int = event.state if hasattr(event, 'state') else 0
             keysym: str = event.keysym.lower()
-            # other patterns are checked in '__check_insert_walker'
+            # other patterns are checked in '__run_watchdogs'
             if (keysym in ('backspace', 'left', 'home')
                     # for ctl+h
                     or state == 4):
@@ -400,7 +415,6 @@ class PyConsole(ScrolledTextEx):
                 if self.__threading_pool.get(thread_id):
                     self.__threading_pool.pop(thread_id)
 
-
         # check running thread
         if len(self.__threading_pool) == 0:
             threading.Thread(target=_execute_wrapper, daemon=True).start()
@@ -456,12 +470,17 @@ class PyConsole(ScrolledTextEx):
             # execute the command
             elif (self.__wait_flag is False) or (striped == ''):
 
+                # wait watchdogs for infinite loop handling
+                self.__watchdogs_wait_flag = True
+
                 try:
+
                     # compile and execute the command
                     compiled = code.compile_command(''.join(self.__committed_strings))
                     self._shell.runcode(compiled)
 
                 finally:
+
                     # set wait flag
                     self.__wait_flag  = False
 
@@ -505,14 +524,23 @@ class PyConsole(ScrolledTextEx):
             self.highlighter.start_index = self.__get_prompt_end_index()
 
 
+        # run watchdogs
+        # reason why the code is written is
+        # teh result may be highlighted
+        self.__watchdogs_wait_flag = False
+
+
     @staticmethod
     def __kill_thread(thread_id):
         # kill the thread
         #   necessary importing ctypes
         #   https://www.delftstack.com/howto/python/python-kill-thread/
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
-                                                   ctypes.py_object(SystemExit))
+        resu = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
+                                                          ctypes.py_object(SystemExit))
 
+        if resu  > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
+            print('Failure in raising exception')
 
 
 
