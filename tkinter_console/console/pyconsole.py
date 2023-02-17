@@ -53,6 +53,40 @@ class PyConsole(ScrolledTextEx):
 
         #TODO-#1: color
         self.__highlighter: Optional[Highlight] = None
+        self.__prompt_tags = {self._prompt_normal_tag: {}
+                              , self._prompt_wait_tag: {}}
+
+        self.__std_tags    = {std_forker.stdin      : {}
+                              , std_forker.stdout   : {}
+                              , std_forker.stderr   : {}
+                              , std_forker.traceback: {}}
+
+    #TODO-#1:
+    def __register_tags(self):
+        def _register(tags):
+            for k, v in tags.items():
+                self.tag_configure(k, **v)
+        _register(self.__prompt_tags)
+        _register(self.__std_tags)
+
+
+    def set_prompt_tags(self, **kwargs):
+        for values in self.__prompt_tags.values():
+            values.update(**kwargs)
+        self.__register_tags()
+
+    def set_std_tag(self, std, **kwargs):
+        self.__std_tags[std].update(**kwargs)
+        self.__register_tags()
+
+    def __add_prompt_tags(self):
+        for tag in self.__prompt_tags:
+            start_index = self.__concat_row_pos(self.__get_current_row(), '0')
+            end_index = self.__get_prompt_end_index()
+            self.tag_add(tag, start_index, end_index)
+
+
+
 
 
     #TODO-#1
@@ -89,6 +123,9 @@ class PyConsole(ScrolledTextEx):
             PyConsole: instance
 
         """
+        #TODO-#1
+        self.__register_tags()
+
         # init prompt
         self.delete('0.0', tk.END)
         self.__init_prompt()
@@ -139,6 +176,9 @@ class PyConsole(ScrolledTextEx):
         self.insert(tk.END, self.__used_prompt_string)
 
         self.mark_gravity(self._prompt_mark, tk.LEFT)
+
+        # TODO-#1
+        self.__add_prompt_tags()
 
 
     def __do_pressed_enter_key(self, event=None):
@@ -239,8 +279,8 @@ class PyConsole(ScrolledTextEx):
 
             #TODO-#1: color print
             if self.__highlighter:
-                self.__highlighter.do_normal_highlight()
-                self.__highlighter.do_regex_highlight()
+                self.__highlighter.do_normal_highlighting()
+                self.__highlighter.do_regex_highlighting()
 
             self.after(rotate_time, checker)
 
@@ -367,11 +407,6 @@ class PyConsole(ScrolledTextEx):
 
             command: str = self.__get_command_string()
 
-            #TODO-#1:
-            if self.highlighter:
-                # set end index
-                self.highlighter.end_index = 'end - 1c'
-
             # insert a new line
             self.insert(tk.INSERT, self.__NEWLINE)
 
@@ -424,11 +459,22 @@ class PyConsole(ScrolledTextEx):
         # execute run function
         _execute()
 
+
+        # TODO-#1:
+        row = self.__get_current_row()
+
         # dump
         for std, r in self.__result.items():
-            #TODO-1#: color print
             if r != '':
+                # insert result at first
                 self.insert(tk.INSERT, self.__result.get(std))
+
+                # TODO-#1:
+                # add tags
+                start_index = self.__concat_row_pos(row, 0)
+                end_index   = self.__concat_row_pos(self.__get_current_row(), 'end')
+                self.tag_add(std, start_index, end_index)
+
 
         # auto scroll
         self.yview(tk.END)
