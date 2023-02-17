@@ -17,11 +17,13 @@ __all__ = ['PyConsole']
 
 
 class PyConsole(ScrolledTextEx):
+    """ Python interactive console. """
 
     def __init__(self, master, _locals, **kwargs):
         super(PyConsole, self).__init__(master=master, **kwargs)
 
         self.__NEWLINE = '\n'
+        self.__WATCH_DOGS_ROTATE = 100  # ms
 
         # create interactive console instance
         self._shell = code.InteractiveConsole(_locals)
@@ -68,6 +70,10 @@ class PyConsole(ScrolledTextEx):
             PyConsole: instance
 
         """
+
+        # no wrap
+        self.configure(wrap='none')
+
         # register tags at first
         self.__register_tags()
 
@@ -80,8 +86,11 @@ class PyConsole(ScrolledTextEx):
         self.__bind_ctr_c()
         self.bind('<Return>', self.__do_pressed_enter_key)
 
-        # run walker
-        self.__check_insert_walker()
+        # run watchdogs
+        self.__run_watchdogs()
+
+        # setting pack configure
+        self.pack_configure(fill=tk.BOTH, expand=True)
 
         return self
 
@@ -270,9 +279,12 @@ class PyConsole(ScrolledTextEx):
         return 'break'
 
 
-    def __check_insert_walker(self
-                              , rotate_time=500  # ms
-                              ) -> None:
+    def __run_watchdogs(self) -> None:
+        """ run watchdogs """
+
+        # set rotate time
+        rotate_time = self.__WATCH_DOGS_ROTATE
+
         # inner function
         def checker():
             # for prevent the input position from going before the prompt
@@ -323,11 +335,6 @@ class PyConsole(ScrolledTextEx):
                     return self.__do_not_do_anything()
 
         # inner function
-        def _on_click(state):
-            self.configure(state=state)
-            self.mark_set(tk.INSERT, 'end - 1c')
-
-        # inner function
         def _write_history_command(press):
             # add the command into the history at first
             self.__add_history(self.__get_command_string())
@@ -341,6 +348,11 @@ class PyConsole(ScrolledTextEx):
                 self.__write_command(history.next())
 
             return self.__do_not_do_anything()
+
+        # inner function
+        def _on_click(state):
+            self.configure(state=state)
+            self.mark_set(tk.INSERT, 'end - 1c')
 
         # bind
         self.bind('<KeyPress>', _do_pressed_key)
@@ -391,7 +403,7 @@ class PyConsole(ScrolledTextEx):
 
         # check running thread
         if len(self.__threading_pool) == 0:
-            threading.Thread(target=_execute_wrapper).start()
+            threading.Thread(target=_execute_wrapper, daemon=True).start()
 
 
     def __execute_command(self) -> None:
