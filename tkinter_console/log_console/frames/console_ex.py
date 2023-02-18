@@ -86,6 +86,10 @@ class LogConsoleExFrame(ttk.Frame):
         self.__w_console_inner_frame.log_formatter = log_formatter
         self.__log_formatter = self.__w_console_inner_frame.log_formatter
 
+    @property
+    def expand_button(self) -> ttk.Button | None:
+        """ ttk.Button | None: expand button widget """
+        return self.__w_expand_button
 
     @property
     def selector_labelframe(self) -> ttk.LabelFrame:
