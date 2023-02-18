@@ -131,7 +131,8 @@ class PyConsole(ScrolledTextEx):
         self.__init_prompt()
 
     @property
-    def highlighter(self):
+    def highlighter(self) -> Highlight | None:
+        """ Highlight: highlight instance """
         return self.__highlighter
 
     def attach_highlighter(self, highlighter: Highlight):
@@ -201,7 +202,7 @@ class PyConsole(ScrolledTextEx):
         Prompt '>>> ' at the normal state, else '... ' by default
         """
         self.mark_set(self._prompt_mark, tk.END)
-        self.mark_gravity(self._prompt_mark, tk.RIGHT)
+        self.mark_gravity(self._prompt_mark, tk.LEFT)
 
         if self.__wait_flag is False:
             self.__used_prompt_string = self._prompt_string[self._prompt_normal_tag]
@@ -211,7 +212,7 @@ class PyConsole(ScrolledTextEx):
 
         self.insert(tk.END, self.__used_prompt_string)
 
-        self.mark_gravity(self._prompt_mark, tk.LEFT)
+        self.mark_gravity(self._prompt_mark, tk.RIGHT)
 
         # add prompt tags for highlighting
         self.__add_prompt_tags()
