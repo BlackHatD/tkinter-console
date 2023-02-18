@@ -264,6 +264,11 @@ class PyConsole(ScrolledTextEx):
         self.__init_prompt()
         self.yview(tk.END)
 
+        # reset highlighting start index
+        if self.highlighter:
+            self.highlighter.start_index = self.__get_prompt_end_index()
+
+
 
     def __bind_ctr_c(self, func: Optional[Callable] = None) -> None:
         """ for bind Control-c """
