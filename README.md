@@ -1,32 +1,14 @@
-# tkinter_console (￣∀￣)ﾆﾔﾘ
-___
+# tkinter-console (￣∀￣)ﾆﾔﾘ
+
 <img src="https://img.shields.io/badge/Python-3.x-3776AB.svg?logo=python&style=plastic" /> <img src="https://img.shields.io/badge/license-GPL-ffd700.svg?style=plastic" /> <img src="https://img.shields.io/badge/tkinter console-v0.0.1-3A98D9.svg?style=plastic" />
 
+The `tkinter_console` is console utility as widgets.
 
-
-
-<br><br>
-
-
-## Table of Contents
-- [tkinter\_console](#tkinter_console-ﾆﾔﾘ)
-  - [Demo](#demo)
-  - [Installation](#installation)
-    - [Environment](#environment)
-  - [Documentation](#documentation)
-    - [Python interactive console](#python-interactive-console)
-      - [1. Quick start](#1-quick-start)
-      - [2. Customization](#2-customization)
-        - [2.1 How to customize a config](#21-how-to-customize-a-config)
-        - [see default config](#see-default-config)
-        - [2.2 How to use the customized config](#22-how-to-use-the-customized-config)
-    - [Log Console](#log-console)
-      - [1. Quick start](#1-quick-start-1)
-      - [2. Other samples](#2-other-samples)
-  - [License](#license)
-
-
-<br><br>
+`tkinter_console` includes below packages
+  - Python interactive console
+  - Log console
+   
+These console were created using `tkinter`.
 
 ## Demo
 - **Python interactive console**
@@ -44,6 +26,27 @@ ___
 
 
 
+<br><br>
+
+
+## Table of Contents
+- [tkinter\_console](#tkinter_console-ﾆﾔﾘ)
+  - [Demo](#Demo)
+  - [Installation](#installation)
+    - [Environment](#environment)
+  - [Documentation](#documentation)
+    - [Python interactive console](#python-interactive-console)
+      - [1. Quick start](#1-quick-start)
+      - [2. Customization](#2-customization)
+        - [2.1 How to customize a config](#21-how-to-customize-a-config)
+        - [2.2 How to use the customized config](#22-how-to-use-the-customized-config)
+    - [Log Console](#log-console)
+      - [1. Quick start](#1-quick-start-1)
+      - [2. Other samples](#2-other-samples)
+  - [License](#license)
+
+
+<br><br>
 
 ## Installation
 
@@ -102,7 +105,7 @@ if __name__ == '__main__':
 <img src='./docs/console/img/01_quick_start.jpg' width='60%' />
 
 
-- **Note:**
+- **Note:**  
   If you generate an infinite loop, press **`ctrl`**+**`c`** key.  
   like the below code...
   ```python
@@ -258,7 +261,7 @@ if __name__ == '__main__':
         ```
         - **NOTE**:  
           `target_keyword` is anything OK.  
-          Don't add other keys.  
+          Don't add other keys except in `kwargs` values.  
           <br>
 
           If set builtin's key, it' overridden (not updated) this settings.  
@@ -294,8 +297,8 @@ if __name__ == '__main__':
         ```
         - **NOTE**:  
           `target_keyword` is anything OK.  
-          In the `kwargs`, **need** `pattern` key.   
-          Don't add other keys.  
+          In the `kwargs`, **need** `pattern` key, which is an original key.   
+          Don't add other keys except in `kwargs` values.
 
           <br>
 
