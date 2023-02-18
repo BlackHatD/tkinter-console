@@ -40,7 +40,6 @@ class PyConsole(ScrolledTextEx):
         self.__watchdogs_wait_flag = False
 
         # prompt settings
-        self._prompt_mark       = 'prompt'
         self._prompt_normal_tag = 'normal'
         self._prompt_wait_tag   = 'wait'
         self._prompt_string     = {self._prompt_normal_tag: '>>> '
@@ -201,8 +200,6 @@ class PyConsole(ScrolledTextEx):
 
         Prompt '>>> ' at the normal state, else '... ' by default
         """
-        self.mark_set(self._prompt_mark, tk.END)
-
         if self.__wait_flag is False:
             self.__used_prompt_string = self._prompt_string[self._prompt_normal_tag]
 
