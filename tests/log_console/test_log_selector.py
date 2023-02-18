@@ -31,7 +31,7 @@ if __name__ == '__main__':
     console_inner_frame.init().pack(fill=tk.BOTH, expand=True)
 
     selector_inner_frame = LogSelectorFrame(selector_frame, console_inner_frame)
-    selector_inner_frame.set_checkbutton_flag(ERROR)
+    selector_inner_frame.set_checkbutton_flag_from(ERROR)
     selector_inner_frame.init().pack(fill=tk.BOTH, expand=True)
 
 

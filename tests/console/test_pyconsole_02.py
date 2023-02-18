@@ -14,12 +14,12 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.title("PyConsole Test 02 - highlight")
 
-    console = PyConsole(root, locals(), wrap='none').init()
+    console = PyConsole(root, locals(), wrap='none')
     info    = tk.StringVar()
     label   = ttk.Label(root, textvariable=info)
 
     label.pack(fill=tk.X)
-    console.pack(fill=tk.BOTH, expand=True)
+    console.init().pack(fill=tk.BOTH, expand=True)
 
     console.focus()
 
@@ -57,7 +57,6 @@ if __name__ == '__main__':
 
 
     def loop():
-        global info
         i = console.index(tk.INSERT)
         s = console.get(i)
         row, pos = i.split('.')

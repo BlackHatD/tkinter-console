@@ -10,7 +10,7 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.title("PyConsole Test01 - prompt")
 
-    console = PyConsole(root, locals(), wrap='none').init()
+    console = PyConsole(root, locals(), wrap='none')
     info    = tk.StringVar()
     label   = ttk.Label(root, textvariable=info)
 
@@ -18,12 +18,11 @@ if __name__ == '__main__':
     console.set_prompt_string(normal="$$$", wait='...')
 
     label.pack(fill=tk.X)
-    console.pack(fill=tk.BOTH, expand=True)
+    console.init().pack(fill=tk.BOTH, expand=True)
 
     console.focus()
 
     def loop():
-        global info
         i = console.index(tk.INSERT)
         s = console.get(i)
         row, pos = i.split('.')
