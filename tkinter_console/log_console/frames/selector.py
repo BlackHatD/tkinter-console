@@ -8,10 +8,7 @@ from logging import (
 )
 
 # my modules and packages
-from tkinter_console.log_console.frames.console import (
-    LogConsoleFrame
-    , DEBUG, INFO, WARNING, ERROR, CRITICAL
-)
+from tkinter_console.log_console.frames.console import LogConsoleFrame
 from tkinter_console.utils.checkbuttonex import CheckButtonEx
 
 
@@ -36,6 +33,9 @@ class LogSelectorFrame(ttk.Frame):
         Returns:
             LogSelectorFrame: instance
         """
+        # destroy checkbuttons if already exists
+        self.destroy_checkbuttons()
+
         # create buttons
         self.__create_button_widgets()
 
@@ -47,6 +47,12 @@ class LogSelectorFrame(ttk.Frame):
 
         return self
 
+
+    def destroy_checkbuttons(self):
+        """ destroy checkbuttons """
+        if len(self.__checkbuttons) > 0:
+            for cb in self.__checkbuttons.values():
+                cb.destroy()
 
     def set_checkbutton_flag(self, level, flag) -> None:
         """ set checkbutton flag """
