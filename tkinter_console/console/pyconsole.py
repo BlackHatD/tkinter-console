@@ -20,6 +20,13 @@ class PyConsole(ScrolledTextEx):
     """ Python interactive console. """
 
     def __init__(self, master, _locals, **kwargs):
+        """ initializer
+
+        Args:
+            master  : instance of TK widget
+            _locals : locals()
+            **kwargs: kwargs of tk.Text
+        """
         super(PyConsole, self).__init__(master=master, **kwargs)
 
         self.__NEWLINE = '\n'
