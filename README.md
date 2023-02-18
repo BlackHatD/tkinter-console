@@ -70,7 +70,7 @@ pip install git+https://github.com/BlackHatD/tkinter-console.git
     - [x] [`LogConsoleExFrame`](./tkinter_console/log_console/frames/console_ex.py): mixes `LogSelectorFrame` and `LogConsoleFrame`
 
 
-basically use checked.
+basically use checked.  
 the not checked class of samples are [here](./tests), if you want to use it.
 
 <br>
@@ -103,7 +103,7 @@ if __name__ == '__main__':
 
 
 - **Note:**
-  If you generate an infinite loop, press **`ctrl`**+**`c`** key.
+  If you generate an infinite loop, press **`ctrl`**+**`c`** key.  
   like the below code...
   ```python
   while True:
@@ -119,7 +119,7 @@ if __name__ == '__main__':
 #### 2. Customization
 
 ##### 2.1 How to customize a config
-generate a config at first
+generate a config at first  
 (generated in the current directory as `settings/console.json`)
 ```python
 # -*- coding:utf-8 -*-
@@ -180,7 +180,7 @@ if __name__ == '__main__':
 
       <br>
 
-      - **NOTE**:
+      - **NOTE**:  
           Don't edit key, and don't add anything except in `kwargs` values
       <br>
 
@@ -205,8 +205,8 @@ if __name__ == '__main__':
       }
       ```
 
-      `stdin`, `stdout`, `stderr`, `traceback` settings
-      ex) If `stderr` occurred, displayed in `darkred` in this case.
+      `stdin`, `stdout`, `stderr`, `traceback` settings  
+      ex) If `stderr` occurred, displayed in `darkred` in this case.  
       <br>
 
       `kwargs` is the **`Text`**'s **`tag_configure`** kwargs 
@@ -214,7 +214,7 @@ if __name__ == '__main__':
       <br>
 
 
-      - **NOTE**:
+      - **NOTE**:  
           Don't edit key, and don't add anything except in `kwargs` values
       <br>
 </details>
@@ -238,7 +238,7 @@ if __name__ == '__main__':
       if a builtin's keyword is input, it's highlighted in `peachpuff`, in this case.
       <br>
 
-      - **NOTE**:
+      - **NOTE**:  
         Don't edit key, and don't add anything except in `kwargs` values
     <br>
 
@@ -256,13 +256,13 @@ if __name__ == '__main__':
           "kwargs": {}
         }
         ```
-        - **NOTE**:
-          `target_keyword` is anything OK.
-          Don't add other keys.
+        - **NOTE**:  
+          `target_keyword` is anything OK.  
+          Don't add other keys.  
           <br>
 
-          If set builtin's key, it' overridden (not updated) this settings.
-          In this case `"kwargs": {}`, displayed in default color.
+          If set builtin's key, it' overridden (not updated) this settings.  
+          In this case `"kwargs": {}`, displayed in default color.  
 
       <br>
 
@@ -292,10 +292,10 @@ if __name__ == '__main__':
           }
         }
         ```
-        - **NOTE**:
-          `target_keyword` is anything OK.
-          In the `kwargs`, **need** `pattern` key. 
-          Don't add other keys.
+        - **NOTE**:  
+          `target_keyword` is anything OK.  
+          In the `kwargs`, **need** `pattern` key.   
+          Don't add other keys.  
 
           <br>
 
