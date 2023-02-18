@@ -1,10 +1,6 @@
 # tkinter_console (￣∀￣)ﾆﾔﾘ
 ___
-<img src="https://img.shields.io/badge/Python-3.x-3776AB.svg?logo=python&style=plastic" />
-<img src="https://img.shields.io/badge/license-GPL-ffd700.svg?style=plastic" />
-<img src="https://img.shields.io/badge/tkinter console-v0.0.1-3A98D9.svg?style=plastic" />
-
-
+<img src="https://img.shields.io/badge/Python-3.x-3776AB.svg?logo=python&style=plastic" /> <img src="https://img.shields.io/badge/license-GPL-ffd700.svg?style=plastic" /> <img src="https://img.shields.io/badge/tkinter console-v0.0.1-3A98D9.svg?style=plastic" />
 
 
 
@@ -13,8 +9,6 @@ ___
 
 
 ## Table of Contents
-___
-
 - [tkinter\_console](#tkinter_console-ﾆﾔﾘ)
   - [Demo](#demo)
   - [Installation](#installation)
@@ -35,7 +29,6 @@ ___
 <br><br>
 
 ## Demo
-___
 - **Python interactive console**
 
   <img src='./docs/demo/console.jpg' width='50%' />
@@ -53,7 +46,6 @@ ___
 
 
 ## Installation
-___
 
 ### Environment
 - Widows10
@@ -67,7 +59,6 @@ pip install git+https://github.com/BlackHatD/tkinter-console.git
 <br><br>
 
 ## Documentation
-___
 - **console** (Python Interactive Console)
     -  [ ] [`PyConsole`](./tkinter_console/console/pyconsole.py) : base class
     -  [x] [`PyConsoleEx`](./tkinter_console/console/pyconsole_ex.py) : extended `PyConsole` class
@@ -148,7 +139,7 @@ if __name__ == '__main__':
 
 
   - console area
-    ```json
+    ```python
     "console": {...}
     ```
 
@@ -232,7 +223,7 @@ if __name__ == '__main__':
 <details><summary><b>Customize Syntax Highlighting</b></summary><br>
 
   - syntax area
-    ```json
+    ```python
       "syntax": {...}
     ```
     - builtins area
@@ -252,7 +243,7 @@ if __name__ == '__main__':
     <br>
 
     - normal area
-      ```json
+      ```python
       "normal": {...}
       ```
 
@@ -287,7 +278,7 @@ if __name__ == '__main__':
     <br><br>
       
     - regex area
-      ```json
+      ```python
       "regex": {...}
       ```
       In this area, check as regex
@@ -324,6 +315,7 @@ if __name__ == '__main__':
 <br>
 
 sample
+
 <img src="./docs/console/img/02_customize_config.jpg" width="60%" />
 
 <br><br>
@@ -338,10 +330,6 @@ console = PyConsoleEx(master, locals())
 # load config
 console.load_config('./settings/console.json')
 ```
-
-
-
-
 
 <br><br>
 
@@ -406,8 +394,6 @@ console.load_config('./settings/console.json')
 
 <img src='./docs/log_console/img/01_quick_start.jpg' width='60%' />
 
-
-
 <br><br>
 
 
@@ -420,7 +406,6 @@ console.load_config('./settings/console.json')
 <br><br>
 
 ## License
-___
 [GNU GENERAL PUBLIC LICENSE Version 2](./LICENSE)
 
 
