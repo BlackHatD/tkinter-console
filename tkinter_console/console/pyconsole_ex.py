@@ -14,6 +14,7 @@ __all__ = ['PyConsoleEx']
 
 class PyConsoleEx(PyConsole):
     """ Extended PyConsole """
+    DEFAULT_CONFIG = os.path.abspath(os.path.join(os.path.dirname(__file__), 'settings', 'console.json'))
 
     def __init__(self, master, _locals, **kwargs):
         super(PyConsoleEx, self).__init__(master=master, _locals=_locals, **kwargs)
@@ -21,9 +22,7 @@ class PyConsoleEx(PyConsole):
         self.__config: Optional[dict] = None
 
         # load default config at first
-        here = os.path.dirname(__file__)
-        config = 'settings/console.json'
-        self.__DEFAULT_CONFIG = os.path.abspath(os.path.join(here, config))
+        self.__DEFAULT_CONFIG = PyConsoleEx.DEFAULT_CONFIG
         self.load_config(self.__DEFAULT_CONFIG)
 
         # attach highlight object
@@ -82,9 +81,10 @@ class PyConsoleEx(PyConsole):
             self.__config = json.load(fd)
 
 
-    def generate_config(self) -> None:
+    @classmethod
+    def generate_config(cls) -> None:
         """ generate config """
-        cfg  = os.path.dirname(self.__DEFAULT_CONFIG)
+        cfg  = os.path.dirname(cls.DEFAULT_CONFIG)
         dist = os.path.join(os.getcwd(), os.path.basename(cfg))
         shutil.copytree(cfg, dist)
 
