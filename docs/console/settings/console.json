@@ -1,0 +1,76 @@
+{
+  "console": {
+    "kwargs": {
+      "foreground": "silver",
+      "background": "black",
+      "insertbackground": "silver",
+      "relief": "ridge"
+    },
+    "prompt": {
+      "normal": "( ﾟДﾟ)    ",
+      "wait": "( *´艸｀) ",
+      "kwargs": {
+        "foreground": "steelblue"
+      }
+    },
+    "std": {
+      "stdin": {
+        "kwargs": {}
+      },
+      "stdout": {
+        "kwargs": {
+          "foreground": "silver"
+        }
+      },
+      "stderr": {
+        "kwargs": {
+          "foreground": "darkred"
+        }
+      },
+      "traceback": {
+        "kwargs": {
+          "foreground": "darkred"
+        }
+      }
+    }
+  },
+  "syntax": {
+    "builtins": {
+      "kwargs": {
+        "foreground": "peachpuff"
+      }
+    },
+    "normal": {
+      "class": {
+        "kwargs": {
+          "foreground": "orange"
+        }
+      },
+      "def": {
+        "kwargs": {
+          "foreground": "deepskyblue"
+        }
+      }
+    },
+    "regex": {
+      "comment": {
+        "kwargs": {
+          "pattern": "#.*",
+          "foreground": "dimgray"
+        }
+      },
+      "double_quotation": {
+        "kwargs": {
+          "pattern": "\".*?\"",
+          "foreground": "forestgreen"
+        }
+      },
+      "single_quotation": {
+        "kwargs": {
+          "pattern": "'.*?'",
+          "foreground": "forestgreen"
+        }
+      }
+    }
+  }
+}
