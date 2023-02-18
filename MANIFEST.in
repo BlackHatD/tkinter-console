@@ -1,2 +1,3 @@
-include **/settings/*.json
+include LICENSE
+include **/console/settings/*.json
 
