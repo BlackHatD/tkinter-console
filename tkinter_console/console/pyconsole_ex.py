@@ -3,6 +3,7 @@ import os
 import keyword
 import builtins
 import json
+import shutil
 from typing import Optional
 
 # my modules and packages
@@ -79,6 +80,13 @@ class PyConsoleEx(PyConsole):
         # load the json file
         with open(config_path, mode='rt', encoding='utf-8') as fd:
             self.__config = json.load(fd)
+
+
+    def generate_config(self) -> None:
+        """ generate config """
+        cfg  = os.path.dirname(self.__DEFAULT_CONFIG)
+        dist = os.path.join(os.getcwd(), os.path.basename(cfg))
+        shutil.copytree(cfg, dist)
 
 
     def __setup_console(self) -> None:
