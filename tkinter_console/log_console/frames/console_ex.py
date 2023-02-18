@@ -32,12 +32,15 @@ class LogConsoleExFrame(ttk.Frame):
         Args:
             master       : master (tk or ttk objects)
             logger       : logger object
-            level        : default checkbutton flags. If set 'level=INFO', checkbuttons are checked except "DEBUG"
+            level        : default checkbutton flags
+                             If set 'level=INFO', checkbuttons are checked except "DEBUG".
+                             If set 'None', all unchecked.
             console_bg   : console background color
             auto_scroll  : do auto scroll or not
             log_formatter: formatter
             expand_btn   : show expand button
         """
+
         super(LogConsoleExFrame, self).__init__(master=master)
 
         # set logger
@@ -97,13 +100,13 @@ class LogConsoleExFrame(ttk.Frame):
         return self.__w_selector_labelframe
 
     @property
-    def selector_inner_frame(self) -> ttk.Frame:
-        """ ttk.Frame: selector frame """
+    def selector_inner_frame(self) -> LogSelectorFrame:
+        """ LogSelectorFrame: selector frame """
         return self.__w_selector_inner_frame
 
     @property
-    def console_inner_frame(self) -> ttk.Frame:
-        """ ttk.Frame: console frame """
+    def console_inner_frame(self) -> LogConsoleFrame:
+        """ LogConsoleFrame: console frame """
         return self.__w_console_inner_frame
 
     @property
@@ -132,14 +135,25 @@ class LogConsoleExFrame(ttk.Frame):
         self.__w_selector_labelframe.configure(**self.w_selector_labelframe_config)
         self.__w_console_labelframe.configure(**self.w_console_labelframe_config)
 
-        # pack selector labelframe
+        # pack the selector labelframe
         self.__w_selector_labelframe.pack_configure(pady=5)
         self.__w_selector_labelframe.pack(fill=tk.BOTH)
 
-        # pack console labelframe
-        # the reason, why the method is used, is
-        # because of the method is used in expand method.
+        # pack the console labelframe
+        #   the reason, why the method is defined as a new method, is
+        #   because of the method is used in the '__expand' method.
         self.__pack_console_labelframe()
+
+        # pack the inner selector frame
+        self.__w_selector_inner_frame.init().pack(side=tk.LEFT)
+
+        # pack the expand button in the selector label frame
+        if self.__w_expand_button:
+            self.__w_expand_button.pack(side=tk.RIGHT)
+
+        # pack the inner console frame
+        self.__w_console_inner_frame.init().pack()
+
 
         # setting pack configure
         self.pack_configure(fill=tk.BOTH, expand=True)
@@ -179,15 +193,12 @@ class LogConsoleExFrame(ttk.Frame):
                                                          , console=self.__w_console_inner_frame)
 
         # set checkbutton default check flag
-        self.__w_selector_inner_frame.set_checkbutton_flag(self.__level)
+        self.__w_selector_inner_frame.set_checkbutton_flag_from(self.__level)
 
         # set console format
         self.__w_console_inner_frame.log_formatter = self.__log_formatter
         # set console background color
         self.__w_console_inner_frame.scrolled_text_widget.configure(background=self.__console_bg)
-
-        # pack selector
-        self.__w_selector_inner_frame.init().pack(side=tk.LEFT)
 
         # create expand button
         if self.__expand_flag:
@@ -196,11 +207,6 @@ class LogConsoleExFrame(ttk.Frame):
                                                 , width=3
                                                 , command=self.__expand)
             self.__w_expand_button.pack_configure(pady=5)
-            self.__w_expand_button.pack(side=tk.RIGHT)
-
-
-        # pack console
-        self.__w_console_inner_frame.init().pack()
 
 
     def __expand(self):
