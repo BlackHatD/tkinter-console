@@ -8,7 +8,10 @@ from logging import (
 )
 
 # my modules and packages
-from tkinter_console.log_console.frames.console import LogConsoleFrame
+from tkinter_console.log_console.frames.console import (
+    LogConsoleFrame
+    , DEBUG, INFO, WARNING, ERROR, CRITICAL
+)
 from tkinter_console.utils.checkbuttonex import CheckButtonEx
 
 
@@ -45,13 +48,21 @@ class LogSelectorFrame(ttk.Frame):
         return self
 
 
-    def set_checkbutton_flag(self, level) -> None:
+    def set_checkbutton_flag(self, level, flag) -> None:
+        """ set checkbutton flag """
+        self._log_display_fmt[level]['flag'] = flag
+
+
+    def set_checkbutton_flag_from(self, level) -> None:
         """ set checkbutton flag """
         for lev, value in copy.deepcopy(self._log_display_fmt).items():
-            if lev >= level:
-                self._log_display_fmt[lev]['flag'] = True
-            else:
+            if level is None:
                 self._log_display_fmt[lev]['flag'] = False
+            else:
+                if lev >= level:
+                    self._log_display_fmt[lev]['flag'] = True
+                else:
+                    self._log_display_fmt[lev]['flag'] = False
 
 
     def __create_button_widgets(self) -> None:
