@@ -202,7 +202,6 @@ class PyConsole(ScrolledTextEx):
         Prompt '>>> ' at the normal state, else '... ' by default
         """
         self.mark_set(self._prompt_mark, tk.END)
-        self.mark_gravity(self._prompt_mark, tk.LEFT)
 
         if self.__wait_flag is False:
             self.__used_prompt_string = self._prompt_string[self._prompt_normal_tag]
@@ -212,7 +211,6 @@ class PyConsole(ScrolledTextEx):
 
         self.insert(tk.END, self.__used_prompt_string)
 
-        self.mark_gravity(self._prompt_mark, tk.RIGHT)
 
         # add prompt tags for highlighting
         self.__add_prompt_tags()
@@ -416,6 +414,8 @@ class PyConsole(ScrolledTextEx):
                     self.__threading_pool.pop(thread_id)
                     # clear and write new line
                     self.__clear_and_write_newline()
+                    # set watchdogs flag
+                    self.__watchdogs_wait_flag = False
 
             try:
                 # bind kill thread to ctr+c
