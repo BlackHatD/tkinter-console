@@ -25,7 +25,7 @@ class PyConsoleEx(PyConsole):
         self.__DEFAULT_CONFIG = PyConsoleEx.DEFAULT_CONFIG
         self.load_config(self.__DEFAULT_CONFIG)
 
-        # attach highlight object
+        # create a highlight object
         self.__highlighter = Highlight()
 
     @property
