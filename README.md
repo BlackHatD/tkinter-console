@@ -2,9 +2,9 @@
 
 <img src="https://img.shields.io/badge/Python-3.x-3776AB.svg?logo=python&style=plastic" /> <img src="https://img.shields.io/badge/license-GPL-ffd700.svg?style=plastic" /> <img src="https://img.shields.io/badge/tkinter console-v0.0.1-3A98D9.svg?style=plastic" />
 
-The `tkinter_console` is a widget utility package.
+The `tkinter-console` is a widget utility package.
 
-`tkinter_console` includes below console widgets
+`tkinter-console` includes below console widgets
   - Python interactive console
   - Log console
    
