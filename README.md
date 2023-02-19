@@ -47,6 +47,7 @@ These console were created using `tkinter`.
       - [2. Other samples](#2-other-samples)
   - [More information](#more-information)
   - [License](#license)
+  - [References](#references)
 
 
 <br><br>
@@ -433,4 +434,10 @@ TODO
 [GNU GENERAL PUBLIC LICENSE Version 2](./LICENSE)
 
 
+
+<br><br>
+
+## References
+[Logging to a Tkinter ScrolledText Widget](https://beenje.github.io/blog/posts/logging-to-a-tkinter-scrolledtext-widget/)  
+[TkinterでLog出力用windowを作ってみました](https://qiita.com/Nomisugi/items/45349c04ebe0b88d22fb)  
 
