@@ -46,18 +46,17 @@ class PyConsole(ScrolledTextEx):
                                    , self._prompt_wait_tag: '... '}
 
         # this parameter will be switched '>>>' or '...'
-        # (set in '__init_prompt' method at the first time)
+        # (it's set at the first time, in '__init_prompt' method)
         self.__used_prompt_string: Optional[str] = None
 
         # for infinite loop handling
         self.__threading_pool = {}
 
-        # wait flag (set in '__init_prompt' method at the first time)
-        #   if an inputted the command includes ':' at the end
-        #   set this flag
+        # wait flag (it's set at the first time, in '__init_prompt' method)
+        #   if an inputted the command includes ':' at the end, the flag is set
         self.__wait_flag: Optional[bool] = None
 
-        # committed string list (set in '__init_prompt' method at the first time)
+        # committed string list (it's set at the first time in '__init_prompt')
         #   if is the waiting stat, appended command strings
         self.__committed_strings: Optional[list]  = None
         # for getting command in history
@@ -425,10 +424,11 @@ class PyConsole(ScrolledTextEx):
                 # reset bind
                 self.__bind_ctr_c()
 
-                # double check
-                #   reason why double check is
-                #   if ctr+'c' is pressed, in '__kill_thread' method,
-                #   the thread_id is popped
+                # pop the thread id
+                #   double check
+                #     reason why double check is
+                #     if ctr+'c' is pressed, in '__kill_thread' method,
+                #     the thread_id is popped
                 if self.__threading_pool.get(thread_id):
                     self.__threading_pool.pop(thread_id)
 
@@ -541,9 +541,9 @@ class PyConsole(ScrolledTextEx):
             self.highlighter.start_index = self.__get_prompt_end_index()
 
 
-        # run watchdogs
-        # reason, why the code is written here,
-        # is the dumped result may be highlighted
+        # set watchdogs wait flag
+        #   reason, why the code is written here, is
+        #   the dumped result may be highlighted by the watchdogs
         self.__watchdogs_wait_flag = False
 
 
