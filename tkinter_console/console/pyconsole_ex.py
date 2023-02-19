@@ -84,9 +84,9 @@ class PyConsoleEx(PyConsole):
     @classmethod
     def generate_config(cls) -> None:
         """ generate config """
-        cfg  = os.path.dirname(cls.DEFAULT_CONFIG)
-        dist = os.path.join(os.getcwd(), os.path.basename(cfg))
-        shutil.copytree(cfg, dist)
+        cfg_dir = os.path.dirname(cls.DEFAULT_CONFIG)
+        dist    = os.path.join(os.getcwd(), os.path.basename(cfg_dir))
+        shutil.copytree(cfg_dir, dist)
 
 
     def __setup_console(self) -> None:
