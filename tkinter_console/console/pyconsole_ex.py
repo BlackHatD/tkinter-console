@@ -132,12 +132,12 @@ class PyConsoleEx(PyConsole):
         py_keyword_dict: dict = {}
 
         # inner function
-        def _set_building_keywords(l):
+        def _set_builtin_keywords(l):
             py_keyword_dict.update({str(k): {**syntax_builtins['kwargs']} for k in l})
 
         # set builtin keywords
-        _set_building_keywords(keyword.kwlist)
-        _set_building_keywords(dir(builtins))
+        _set_builtin_keywords(keyword.kwlist)
+        _set_builtin_keywords(dir(builtins))
 
         # inner function
         def _register_tags(default_kwargs, obj, func):
