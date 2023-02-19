@@ -52,9 +52,6 @@ class std_forker:
         self._org_stdout = sys.stdout
         self._org_stderr = sys.stderr
 
-        # function result
-        self._func_result = None
-
         # for callback args
         self._result_fmt = {self.stdin      : ''
                             , self.stdout   : ''
@@ -64,16 +61,27 @@ class std_forker:
 
 
     def __call__(self, func):
+        """ fork std
+
+        Args:
+            func: decorated function
+
+        Returns:
+            If successfully completed, func's result, else None
+        """
 
         # wrapper function
         def wrapper(*args, **kwargs):
+
+            # function result
+            func_result = None
 
             try:
                 # override stdin, stdout, stderr
                 self.__override_std()
 
                 # run function and set return value
-                self._func_result = func(*args, **kwargs)
+                func_result = func(*args, **kwargs)
 
             except Exception:
                 # set traceback
@@ -98,7 +106,7 @@ class std_forker:
                 # restore output
                 self._result = copy.deepcopy(self._result_fmt)
 
-            return self._func_result
+            return func_result
 
         # return wrapper function's address
         return wrapper
