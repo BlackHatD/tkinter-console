@@ -17,7 +17,6 @@ if __name__ == '__main__':
 
     @std_forker(callback=callback)
     def on_run(e):
-        global command_entry
         command = command_entry.get()
         compiled = code.compile_command(command)
 
