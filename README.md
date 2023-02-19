@@ -2,7 +2,7 @@
 
 <img src="https://img.shields.io/badge/Python-3.x-3776AB.svg?logo=python&style=plastic" /> <img src="https://img.shields.io/badge/license-GPL-ffd700.svg?style=plastic" /> <img src="https://img.shields.io/badge/tkinter console-v0.0.1-3A98D9.svg?style=plastic" />
 
-The `tkinter_console` is a console utility as widgets.
+The `tkinter_console` is a widget utility package.
 
 `tkinter_console` includes below console widgets
   - Python interactive console
@@ -31,8 +31,9 @@ These console were created using `tkinter`.
 
 
 ## Table of Contents
-- [tkinter\_console](#tkinter_console-ﾆﾔﾘ)
-  - [Demo](#Demo)
+- [tkinter-console](#tkinter-console-ﾆﾔﾘ)
+  - [Demo](#demo)
+  - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
     - [Environment](#environment)
   - [Documentation](#documentation)
@@ -44,6 +45,7 @@ These console were created using `tkinter`.
     - [Log Console](#log-console)
       - [1. Quick start](#1-quick-start-1)
       - [2. Other samples](#2-other-samples)
+  - [More information](#more-information)
   - [License](#license)
 
 
@@ -114,10 +116,17 @@ if __name__ == '__main__':
     # something...
   ```
 
-  **`ctrl`**+**`c`** key works are
-  - initialized prompt on the current line (default)
-  - kill the thread, and initialized prompt (when the entered command is being executed)
+  - About `Key` bindings  
+    - **`ctrl`**+**`c`** key
+      - initialized prompt on the current line (default)
+      - kill the thread, and initialized prompt (when the entered command is being executed)
+    <br>
+
+    - **`up`** and **`down`** key  
+      - `up`: prev history
+      - `down` : next history
   
+
 <br><br>
 
 #### 2. Customization
@@ -230,6 +239,11 @@ if __name__ == '__main__':
     ```python
       "syntax": {...}
     ```
+    
+    belows `kwargs` is the **`Text`**'s **`tag_configure`** kwargs 
+
+    <br>
+
     - builtins area
 
       ```json
@@ -244,6 +258,7 @@ if __name__ == '__main__':
 
       - **NOTE**:  
         Don't edit key, and don't add anything except in `kwargs` values
+       
     <br>
 
     - normal area
@@ -409,12 +424,13 @@ console.load_config('./settings/console.json')
 
 <br><br>
 
+## More information
+TODO
+
+<br><br>
+
 ## License
 [GNU GENERAL PUBLIC LICENSE Version 2](./LICENSE)
-
-
-
-
 
 
 
