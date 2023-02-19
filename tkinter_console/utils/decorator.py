@@ -15,14 +15,14 @@ class std_forker:
     stderr    = sys.__stderr__.name
     traceback = traceback.__name__
 
-    def __init__(self, callback: Optional[Callable] = None):
+    def __init__(self, callback: Callable or None):
         """ initialization method
 
         Notes:
             The 'callback' function is given 'result' at the first argument.
 
         Examples:
-            >> @std_forker()
+            >> @std_forker(None)
             >> def something():
             >>   print(help())
             >>
