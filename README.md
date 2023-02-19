@@ -438,6 +438,7 @@ TODO
 <br><br>
 
 ## References
+[How to highlight whole syntax(including every modules's Keywords,class,etc.) of python in text widget in python tkinter](https://stackoverflow.com/questions/71544812/how-to-highlight-whole-syntaxincluding-every-moduless-keywords-class-etc-of)
 [Logging to a Tkinter ScrolledText Widget](https://beenje.github.io/blog/posts/logging-to-a-tkinter-scrolledtext-widget/)  
 [TkinterでLog出力用windowを作ってみました](https://qiita.com/Nomisugi/items/45349c04ebe0b88d22fb)  
 
