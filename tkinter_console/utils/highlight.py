@@ -11,7 +11,7 @@ PATTERN = 'pattern'
 class Highlight:
 
     def __init__(self):
-        # exclude keys at 'tag_configure' is used
+        # exclude keys is used in '__register_tags_by_configure' method
         self.__exclude_keys = (PATTERN,)
 
         self._master     : Optional[tk.Text] = None
@@ -25,6 +25,17 @@ class Highlight:
 
     def attach(self, master: tk.Text
                , start_index='1.0', end_index=tk.END):
+        """ attach the instance of tk.Text
+
+        Args:
+            master     : instance of tk.Text
+            start_index: start of want to highlight
+            end_index  : end
+
+        Returns:
+            Highlight: instance
+
+        """
         self._master      = master
         self.start_index = start_index
         self.end_index   = end_index
