@@ -429,7 +429,7 @@ console.init()
 <br><br>
 
 ## More information
-TODO
+- [D: tkinter で コンソール widgets を作ってみた](https://zenn.dev/blackhat_d/articles/20230220-tkinter-console-9a91eff4400154)
 
 <br><br>
 
