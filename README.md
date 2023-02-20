@@ -347,8 +347,11 @@ sample
 # create an instance
 console = PyConsoleEx(master, locals())
 
-# load config
+# load the config before initialization
 console.load_config('./settings/console.json')
+
+# initialize
+console.init()  
 ```
 
 <br><br>
