@@ -3,7 +3,8 @@ import copy
 import io
 import sys
 import traceback
-from typing import Optional, Callable
+import functools
+from typing import Callable
 
 __all__ = ['std_forker']
 
@@ -71,6 +72,7 @@ class std_forker:
         """
 
         # wrapper function
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
 
             # function result
