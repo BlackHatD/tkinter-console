@@ -11,9 +11,10 @@ __all__ = ['std_forker']
 class std_forker:
     """ Fork stdin, stdout, stderr """
 
-    stdin     = sys.__stdin__.name
-    stdout    = sys.__stdout__.name
-    stderr    = sys.__stderr__.name
+    # for PyInstaller's option '--noconsole'
+    stdin     = 'stdin'
+    stdout    = 'stdout'
+    stderr    = 'stderr'
     traceback = traceback.__name__
 
     def __init__(self, callback: Callable or None):
