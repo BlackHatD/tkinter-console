@@ -11,7 +11,6 @@ __all__ = ['std_forker']
 class std_forker:
     """ Fork stdin, stdout, stderr """
 
-    # for PyInstaller's option '--noconsole'
     stdin     = 'stdin'
     stdout    = 'stdout'
     stderr    = 'stderr'
